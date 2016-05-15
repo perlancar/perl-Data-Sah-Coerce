@@ -11,6 +11,8 @@ use Log::Any::IfLOG '$log';
 use Exporter qw(import);
 our @EXPORT_OK = qw(gen_coercer);
 
+our %SPEC;
+
 our $Log_Coercer_Code = $ENV{LOG_SAH_COERCER_CODE} // 0;
 
 my $rule_modules_cache;
@@ -25,6 +27,32 @@ sub _list_rule_modules {
     $mods;
 }
 
+$SPEC{gen_coercer} = {
+    v => 1.1,
+    summary => 'Generate coercer code',
+    args => {
+        type => {
+            schema => 'str*', # XXX sah::typename
+            req => 1,
+            pos => 0,
+        },
+        coerce_to => {
+            schema => 'str*',
+        },
+        coerce_from => {
+            schema => ['array*', of=>'str*'],
+        },
+        dont_coerce_from => {
+            schema => ['array*', of=>'str*'],
+        },
+        source => {
+            summary => 'If set to true, will return coercer source code string'.
+                ' instead of compiled code',
+            schema => 'bool',
+        },
+    },
+    result_naked => 1,
+};
 sub gen_coercer {
     my %args = @_;
 
@@ -32,7 +60,8 @@ sub gen_coercer {
 
     my $all_mods = _list_rule_modules();
 
-    my $prefix = "Data::Sah::Coerce::perl::$type\::";
+    my $typen = $type; $typen =~ s/::/__/g;
+    my $prefix = "Data::Sah::Coerce::perl::$typen\::";
     my @rules;
     for my $mod (keys %$all_mods) {
         next unless $mod =~ /\A\Q$prefix\E(.+)/;
@@ -90,6 +119,8 @@ sub gen_coercer {
     if ($Log_Coercer_Code) {
         $log->tracef("Coercer code (gen args: %s): %s", \%args, $code);
     }
+
+    return $code if $args{source};
 
     my $coercer = eval $code;
     die if $@;
@@ -184,25 +215,6 @@ Expression in the target language to actually convert data to the target type.
 =item * modules => hash
 
 A list of modules required by the expressions.
-
-=back
-
-
-=head1 FUNCTIONS
-
-=head2 gen_coercer(%args) => coderef
-
-Generate coercer code. Known arguments (C<*> indicates required arguments):
-
-=over
-
-=item * type* => str
-
-=item * coerce_to => str
-
-=item * coerce_from => array
-
-=item * dont_coerce_from => array
 
 =back
 
