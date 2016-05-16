@@ -30,6 +30,12 @@ sub _list_rule_modules {
 $SPEC{gen_coercer} = {
     v => 1.1,
     summary => 'Generate coercer code',
+    description => <<'_',
+
+This is mostly for testing. Normally the coercion rules will be used from
+`Data::Sah`.
+
+_
     args => {
         type => {
             schema => 'str*', # XXX sah::typename
