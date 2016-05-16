@@ -37,7 +37,8 @@ sub coerce {
     } elsif ($coerce_to eq 'Time::Moment') {
         $res->{expr_coerce} = $dt;
     } else {
-        die "BUG: Unknown coerce_to value '$coerce_to'";
+        die "BUG: Unknown coerce_to value '$coerce_to', ".
+            "please use int(epoch), DateTime, or Time::Moment";
     }
 
     $res;

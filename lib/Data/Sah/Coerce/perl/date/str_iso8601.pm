@@ -41,7 +41,8 @@ sub coerce {
         $res->{modules}{"Time::Moment"} //= 0;
         $res->{expr_coerce} = "Time::Moment->from_epoch($code_epoch)";
     } else {
-        die "BUG: Unknown coerce_to value '$coerce_to'";
+        die "BUG: Unknown coerce_to value '$coerce_to', ".
+            "please use int(epoch), DateTime, or Time::Moment";
     }
 
     $res;
