@@ -45,6 +45,6 @@ sub coerce {
 }
 
 1;
-# ABSTRACT: Coerce date from DateTime object
+# ABSTRACT: Coerce date from Time::Moment object
 
 =for Pod::Coverage ^(meta|coerce)$
