@@ -115,7 +115,14 @@ sub gen_coercer {
         }
     }
 
-    my $code = "sub { my \$data = shift; $expr }";
+    my $code = join(
+        "",
+        "sub {\n",
+        "    my \$data = shift;\n",
+        "    return undef unless defined(\$data);\n",
+        "    $expr;\n",
+        "}",
+    );
     if ($Log_Coercer_Code) {
         $log->tracef("Coercer code (gen args: %s): %s", \%args, $code);
     }
