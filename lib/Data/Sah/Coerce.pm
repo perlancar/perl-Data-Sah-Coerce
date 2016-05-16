@@ -161,7 +161,7 @@ This distribution contains a standard set of coercion rules for L<Data::Sah>. It
 is separated from the C<Data-Sah> distribution and can be used independently.
 
 A coercion rule is put in
-C<Data::Sah::Coerce::$LANG::$TARGET_TYPE::$SOURCE_TYPE_AND_EXTRA_DESCRIPTION>
+C<Data::Sah::Coerce::$COMPILER::$TARGET_TYPE::$SOURCE_TYPE_AND_EXTRA_DESCRIPTION>
 module, for example: L<Data::Sah::Coerce::perl::date::int_epoch> for converting
 date from integer (Unix epoch) or L<Data::Sah::Coerce::perl::date::str_iso8601>
 for converting date from ISO8601 strings like "2016-05-15".
