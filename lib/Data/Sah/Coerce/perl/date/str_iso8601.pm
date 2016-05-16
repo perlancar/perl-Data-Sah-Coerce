@@ -10,6 +10,7 @@ use warnings;
 sub meta {
     +{
         enable_by_default => 1,
+        might_die => 1, # we match any (YYYY-MM-DD... string, so the conversion to date might fail on invalid dates)
     };
 }
 
