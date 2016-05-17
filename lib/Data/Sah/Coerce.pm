@@ -290,3 +290,5 @@ Set default for C<$Log_Coercer_Code>.
 =head1 SEE ALSO
 
 L<Data::Sah>
+
+L<Data::Sah::CoerceJS>

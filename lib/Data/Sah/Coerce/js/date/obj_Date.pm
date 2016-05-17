@@ -26,7 +26,7 @@ sub coerce {
         "($dt instanceof Date)",
     );
 
-    $res->{expr_coerce} = "isNaN($dt) ? (throw new Error('Invalid date')) : $dt";
+    $res->{expr_coerce} = "isNaN($dt) ? (function(){throw new Error('Invalid date')})() : $dt";
 
     $res;
 }
