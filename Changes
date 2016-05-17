@@ -1,18 +1,23 @@
 Revision history for Data-Sah-Coerce
 
+0.003   2016-05-17 (PERLANCAR)
+
+        - Add coercion rules for type 'duration'.
+
+
 0.002   2016-05-17 (PERLANCAR)
 
-         - Add js rules for type 'date'.
+        - Add js rules for type 'date'.
 
-         - Introduce rule metadata 'might_die'.
+        - Introduce rule metadata 'might_die'.
 
-         - Add module: Data::Sah::CoerceJS.
+        - Add module: Data::Sah::CoerceJS.
 
-         - perl: Tweak error messages to make it more helpfule.
+        - perl: Tweak error messages to make it more helpfule.
 
-         - Documentationf fixes and addition.
+        - Documentationf fixes and addition.
 
 
 0.001   2016-05-16 (PERLANCAR)
 
-         - First release, incomplete (no JS implementation & test suite yet).
+        - First release, incomplete (no JS implementation & test suite yet).
