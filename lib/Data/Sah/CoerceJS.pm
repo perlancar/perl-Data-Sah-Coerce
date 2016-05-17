@@ -8,7 +8,7 @@ use strict 'subs', 'vars';
 use warnings;
 use Log::Any::IfLOG '$log';
 
-use Data::Sah::Util::JS qw(get_nodejs_path);
+use Nodejs::Util qw(get_nodejs_path);
 
 use Exporter qw(import);
 our @EXPORT_OK = qw(gen_coercer);
