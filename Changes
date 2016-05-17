@@ -1,5 +1,10 @@
 Revision history for Data-Sah-Coerce
 
+0.004   2016-05-18 (PERLANCAR)
+
+	- js: Add coercion rule for duration from float/float-string.
+
+
 0.003   2016-05-17 (PERLANCAR)
 
         - Add coercion rules for type 'duration'.
