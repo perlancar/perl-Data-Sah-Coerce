@@ -22,9 +22,9 @@ sub coerce {
     my $res = {};
 
     my $re_num = '[0-9]+(?:\\.[0-9]+)?';
-    # js doesn't support /x flag, oh my
-    #                                       #1=Y           #2=M(on)       #3=W           #4=D               #5=H           #6=M(in)       #7=S
-    my $expr_re_match = "$dt.match(/\\AP(?:($re_num)Y)?(?:($re_num)M)?(?:($re_num)W)?(?:($re_num)D)?(?:T(?:($re_num)H)?(?:($re_num)M)?(?:($re_num)S)?)?\\z/)";
+    # js doesn't support /x flag, nor \A and \z. oh my
+    #                                     #1=Y           #2=M(on)       #3=W           #4=D               #5=H           #6=M(in)       #7=S
+    my $expr_re_match = "$dt.match(/^P(?:($re_num)Y)?(?:($re_num)M)?(?:($re_num)W)?(?:($re_num)D)?(?:T(?:($re_num)H)?(?:($re_num)M)?(?:($re_num)S)?)?\$/)";
     $res->{expr_match} = join(
         " && ",
         "typeof($dt)=='string'",
