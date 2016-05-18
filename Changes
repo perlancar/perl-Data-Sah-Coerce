@@ -1,5 +1,12 @@
 Revision history for Data-Sah-Coerce
 
+0.005   2016-05-18 (PERLANCAR)
+
+	- No functional changes.
+
+	- Add test suite (so far only for compiler=perl, type=date).
+
+
 0.004   2016-05-18 (PERLANCAR)
 
 	- js: Add coercion rule for duration from float/float-string.
