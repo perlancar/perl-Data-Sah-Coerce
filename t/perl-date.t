@@ -13,22 +13,22 @@ subtest "coerce_to=int(epoch)" => sub {
 
     subtest "uncoerced" => sub {
         is_deeply($c->([]), [], "uncoerced");
-        is_deeply($c->(1), 1);
+        is($c->(1), 1);
     };
     subtest "from integer" => sub {
-        is_deeply($c->(100_000_000), 100_000_000);
+        is($c->(100_000_000), 100_000_000);
     };
     subtest "from DateTime object" => sub {
         test_needs "DateTime";
-        is_deeply($c->(DateTime->new(year=>2016, month=>1, day=>1, time_zone=>"+0000")), 1451606400);
+        is($c->(DateTime->new(year=>2016, month=>1, day=>1, time_zone=>"+0000")), 1451606400);
     };
     subtest "from Time::Moment object" => sub {
         test_needs "Time::Moment";
-        is_deeply($c->(Time::Moment->new(year=>2016, month=>1, day=>1)), 1451606400);
+        is($c->(Time::Moment->new(year=>2016, month=>1, day=>1)), 1451606400);
     };
     subtest "from iso8601 string" => sub {
         test_needs "Time::Local";
-        is_deeply($c->("2016-01-01T00:00:00Z"), 1451606400);
+        is($c->("2016-01-01T00:00:00Z"), 1451606400);
     };
 };
 
@@ -39,30 +39,30 @@ subtest "coerce_to=DateTime" => sub {
 
     subtest "uncoerced" => sub {
         is_deeply($c->([]), [], "uncoerced");
-        is_deeply($c->(1), 1);
+        is($c->(1), 1);
     };
     subtest "from integer" => sub {
         my $d = $c->(100_000_000);
-        is_deeply(ref($d), "DateTime");
-        is_deeply("$d", "1973-03-03T09:46:40");
+        is(ref($d), "DateTime");
+        is("$d", "1973-03-03T09:46:40");
     };
     subtest "from DateTime object" => sub {
         my $d0 = DateTime->new(year=>2016, month=>1, day=>1, time_zone=>"Asia/Jakarta");
         my $d = $c->($d0);
-        is_deeply(ref($d), "DateTime");
+        is(ref($d), "DateTime");
         is($d->epoch, $d0->epoch);
     };
     subtest "from Time::Moment object" => sub {
         test_needs "Time::Moment";
         my $d0 = Time::Moment->new(year=>2016, month=>1, day=>1);
         my $d = $c->($d0);
-        is_deeply(ref($d), "DateTime");
+        is(ref($d), "DateTime");
         is($d->epoch, $d0->epoch);
     };
     subtest "from iso8601 string" => sub {
         test_needs "Time::Local";
         my $d = $c->("2016-01-01T00:00:00Z");
-        is_deeply(ref($d), "DateTime");
+        is(ref($d), "DateTime");
         is($d->epoch, 1451606400);
     };
 };
@@ -74,30 +74,30 @@ subtest "coerce_to=Time::Moment" => sub {
 
     subtest "uncoerced" => sub {
         is_deeply($c->([]), [], "uncoerced");
-        is_deeply($c->(1), 1);
+        is($c->(1), 1);
     };
     subtest "from integer" => sub {
         my $d = $c->(100_000_000);
-        is_deeply(ref($d), "Time::Moment");
-        is_deeply("$d", "1973-03-03T09:46:40Z");
+        is(ref($d), "Time::Moment");
+        is("$d", "1973-03-03T09:46:40Z");
     };
     subtest "from DateTime object" => sub {
         my $d0 = DateTime->new(year=>2016, month=>1, day=>1, time_zone=>"Asia/Jakarta");
         my $d = $c->($d0);
-        is_deeply(ref($d), "Time::Moment");
+        is(ref($d), "Time::Moment");
         is($d->epoch, $d0->epoch);
     };
     subtest "from Time::Moment object" => sub {
         test_needs "Time::Moment";
         my $d0 = Time::Moment->new(year=>2016, month=>1, day=>1);
         my $d = $c->($d0);
-        is_deeply(ref($d), "Time::Moment");
+        is(ref($d), "Time::Moment");
         is($d->epoch, $d0->epoch);
     };
     subtest "from iso8601 string" => sub {
         test_needs "Time::Local";
         my $d = $c->("2016-01-01T00:00:00Z");
-        is_deeply(ref($d), "Time::Moment");
+        is(ref($d), "Time::Moment");
         is($d->epoch, 1451606400);
     };
 };
