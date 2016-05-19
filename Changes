@@ -1,5 +1,13 @@
 Revision history for Data-Sah-Coerce
 
+0.006   2016-05-19 (PERLANCAR) (unreleased)
+
+        - Add coercion rules for type 'bool'.
+
+        - Complete the rest of the test suite (js compiler, duration and bool
+          types).
+
+
 0.005   2016-05-18 (PERLANCAR)
 
 	- No functional changes.
