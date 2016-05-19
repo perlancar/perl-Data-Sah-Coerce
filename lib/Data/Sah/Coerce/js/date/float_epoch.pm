@@ -1,4 +1,4 @@
-package Data::Sah::Coerce::js::date::int_epoch;
+package Data::Sah::Coerce::js::date::float_epoch;
 
 # DATE
 # VERSION
@@ -33,7 +33,7 @@ sub coerce {
 }
 
 1;
-# ABSTRACT: Coerce date from integer (assumed to be epoch)
+# ABSTRACT: Coerce date from number (assumed to be epoch)
 
 =for Pod::Coverage ^(meta|coerce)$
 

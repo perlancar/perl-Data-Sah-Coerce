@@ -115,9 +115,9 @@ sub gen_coercer {
     for my $i (reverse 0..$#res) {
         my $res = $res[$i];
         if ($i == $#res) {
-            $expr = "$res->{expr_match} ? $res->{expr_coerce} : \$data";
+            $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : \$data";
         } else {
-            $expr = "$res->{expr_match} ? $res->{expr_coerce} : ($expr)";
+            $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
         }
     }
 

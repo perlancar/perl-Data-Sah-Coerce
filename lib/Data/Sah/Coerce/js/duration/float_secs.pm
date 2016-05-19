@@ -35,6 +35,6 @@ sub coerce {
 }
 
 1;
-# ABSTRACT: Coerce duration from float (assumed to be number of seconds)
+# ABSTRACT: Coerce duration from number (assumed to be number of seconds)
 
 =for Pod::Coverage ^(meta|coerce)$

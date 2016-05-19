@@ -1,4 +1,4 @@
-package Data::Sah::Coerce::perl::date::int_epoch;
+package Data::Sah::Coerce::perl::date::float_epoch;
 
 # DATE
 # VERSION
@@ -24,12 +24,12 @@ sub coerce {
     $res->{expr_match} = join(
         " && ",
         "!ref($dt)",
-        "$dt =~ /\\A[0-9]{8,10}\\z/",
+        "$dt =~ /\\A[0-9]{8,10}(?:\.[0-9]+)?\\z/",
         "$dt >= 10**8",
         "$dt <= 2**31",
     );
 
-    if ($coerce_to eq 'int(epoch)') {
+    if ($coerce_to eq 'float(epoch)') {
         $res->{expr_coerce} = $dt;
     } elsif ($coerce_to eq 'DateTime') {
         $res->{modules}{DateTime} //= 0;
@@ -39,18 +39,18 @@ sub coerce {
         $res->{expr_coerce} = "Time::Moment->from_epoch($dt)";
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
-            "please use int(epoch), DateTime, or Time::Moment";
+            "please use float(epoch), DateTime, or Time::Moment";
     }
 
     $res;
 }
 
 1;
-# ABSTRACT: Coerce date from integer (assumed to be epoch)
+# ABSTRACT: Coerce date from number (assumed to be epoch)
 
 =for Pod::Coverage ^(meta|coerce)$
 
 =head1 DESCRIPTION
 
-To avoid confusion with integer that contains "YYYY", "YYYYMM", or "YYYYMMDD",
-we only do this coercion if data is an integer between 10^8 and 2^31.
+To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD", we
+only do this coercion if data is a number between 10^8 and 2^31.

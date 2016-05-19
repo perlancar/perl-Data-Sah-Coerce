@@ -1,4 +1,4 @@
-package Data::Sah::Coerce::js::date::int_epoch;
+package Data::Sah::Coerce::js::bool::float;
 
 # DATE
 # VERSION
@@ -23,21 +23,22 @@ sub coerce {
     $res->{expr_match} = join(
         " && ",
         "typeof($dt)=='number'",
-        "$dt >= " . (10**8),
-        "$dt <= " . (2**31),
+        "$dt == 0 || $dt == 1",
     );
 
-    $res->{expr_coerce} = "(new Date($dt * 1000))";
+    # XXX how to avoid matching twice? even three times now
+
+    $res->{expr_coerce} = "$dt == 1 ? true : false";
 
     $res;
 }
 
 1;
-# ABSTRACT: Coerce date from integer (assumed to be epoch)
+# ABSTRACT: Coerce 0 to false and 1 to true
 
 =for Pod::Coverage ^(meta|coerce)$
 
 =head1 DESCRIPTION
 
-To avoid confusion with integer that contains "YYYY", "YYYYMM", or "YYYYMMDD",
-we only do this coercion if data is an integer between 10^8 and 2^31.
+Convert number 1 to false and 0 to true. Any other number is not coerced to
+boolean.

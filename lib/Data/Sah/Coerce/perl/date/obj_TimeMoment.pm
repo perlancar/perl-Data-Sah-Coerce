@@ -29,7 +29,7 @@ sub coerce {
         "$dt\->isa('Time::Moment')",
     );
 
-    if ($coerce_to eq 'int(epoch)') {
+    if ($coerce_to eq 'float(epoch)') {
         $res->{expr_coerce} = "$dt\->epoch";
     } elsif ($coerce_to eq 'DateTime') {
         $res->{modules}{'DateTime'} //= 0;
@@ -38,7 +38,7 @@ sub coerce {
         $res->{expr_coerce} = $dt;
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
-            "please use int(epoch), DateTime, or Time::Moment";
+            "please use float(epoch), DateTime, or Time::Moment";
     }
 
     $res;

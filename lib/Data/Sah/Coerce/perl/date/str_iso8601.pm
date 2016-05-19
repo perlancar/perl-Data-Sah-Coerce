@@ -32,7 +32,7 @@ sub coerce {
     $res->{modules}{"Time::Local"} //= 0;
 
     my $code_epoch = '$4 ? ($8 ? Time::Local::timegm($7, $6, $5, $3, $2-1, $1-1900) : Time::Local::timelocal($7, $6, $5, $3, $2-1, $1-1900)) : Time::Local::timelocal(0, 0, 0, $3, $2-1, $1-1900)';
-    if ($coerce_to eq 'int(epoch)') {
+    if ($coerce_to eq 'float(epoch)') {
         $res->{expr_coerce} = $code_epoch;
     } elsif ($coerce_to eq 'DateTime') {
         $res->{modules}{"DateTime"} //= 0;
@@ -42,7 +42,7 @@ sub coerce {
         $res->{expr_coerce} = "Time::Moment->from_epoch($code_epoch)";
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
-            "please use int(epoch), DateTime, or Time::Moment";
+            "please use float(epoch), DateTime, or Time::Moment";
     }
 
     $res;
