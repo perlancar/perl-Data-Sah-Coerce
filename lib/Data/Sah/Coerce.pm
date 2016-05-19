@@ -86,9 +86,6 @@ sub gen_coercer {
         }
         @rules = @frules;
     }
-    @rules = sort @rules;
-
-    return sub { $_[0] } unless @rules;
 
     my @res;
     for my $rule (@rules) {
@@ -109,26 +106,36 @@ sub gen_coercer {
         }
         push @res, $res;
     }
-    last unless @rules;
 
-    my $expr;
-    for my $i (reverse 0..$#res) {
-        my $res = $res[$i];
-        if ($i == $#res) {
-            $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : \$data";
-        } else {
-            $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+    my $code;
+    if (@res) {
+        @res = sort {
+            ($a->{meta}{prio}//50) <=> ($b->{meta}{prio}//50) ||
+                $a cmp $b
+            } @res;
+
+        my $expr;
+        for my $i (reverse 0..$#res) {
+            my $res = $res[$i];
+            if ($i == $#res) {
+                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : \$data";
+            } else {
+                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+            }
         }
+
+        $code = join(
+            "",
+            "sub {\n",
+            "    my \$data = shift;\n",
+            "    return undef unless defined(\$data);\n",
+            "    $expr;\n",
+            "}",
+        );
+    } else {
+        $code = 'sub { $_[0] }';
     }
 
-    my $code = join(
-        "",
-        "sub {\n",
-        "    my \$data = shift;\n",
-        "    return undef unless defined(\$data);\n",
-        "    $expr;\n",
-        "}",
-    );
     if ($Log_Coercer_Code) {
         $log->tracef("Coercer code (gen args: %s): %s", \%args, $code);
     }
@@ -168,9 +175,10 @@ is separated from the C<Data-Sah> distribution and can be used independently.
 
 A coercion rule is put in
 C<Data::Sah::Coerce::$COMPILER::$TARGET_TYPE::$SOURCE_TYPE_AND_EXTRA_DESCRIPTION>
-module, for example: L<Data::Sah::Coerce::perl::date::int_epoch> for converting
-date from integer (Unix epoch) or L<Data::Sah::Coerce::perl::date::str_iso8601>
-for converting date from ISO8601 strings like "2016-05-15".
+module, for example: L<Data::Sah::Coerce::perl::date::float_epoch> for
+converting date from integer (Unix epoch) or
+L<Data::Sah::Coerce::perl::date::str_iso8601> for converting date from ISO8601
+strings like "2016-05-15".
 
 The module must contain C<meta> subroutine which must return a hashref that has
 the following keys (C<*> marks that the key is required):
@@ -184,7 +192,7 @@ certain situations only and can set this key's value to 0.
 
 To explicitly enable a disabled-by-default rule, a Sah schema can specify an
 attribute C<x.coerce_from> or C<x.perl.coerce_from>, etc to an array of coercion
-rule names to enable explicitly (e.g. C<< ["int_epoch", "str_8601"] >>. On the
+rule names to enable explicitly (e.g. C<< ["float_epoch", "str_8601"] >>. On the
 other hand, to explicitly disable an enabled-by-default rule, one can use the
 C<x.dont_coerce_from> (or C<x.perl.dont_coerce_from>, etc).
 
@@ -233,7 +241,7 @@ indicates required keys):
 =item * expr_match => str
 
 Expression in the target language to test whether the data can be coerced. For
-example, in C<Data::Sah::Coerce::perl::date::int_epoch>, only integers ranging
+example, in C<Data::Sah::Coerce::perl::date::float_epoch>, only integers ranging
 from 10^8 to 2^31 are converted into date. Non-integers or integers outside this
 range are not coerced.
 

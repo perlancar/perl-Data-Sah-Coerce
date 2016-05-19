@@ -90,8 +90,6 @@ sub gen_coercer {
     }
     @rules = sort @rules;
 
-    return sub { $_[0] } unless @rules;
-
     my @res;
     for my $rule (@rules) {
         my $mod = "$prefix$rule";
@@ -105,30 +103,40 @@ sub gen_coercer {
         );
         push @res, $res;
     }
-    last unless @rules;
 
-    my $expr;
-    for my $i (reverse 0..$#res) {
-        my $res = $res[$i];
-        if ($i == $#res) {
-            $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : data";
-        } else {
-            $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+    my $code;
+    if (@res) {
+        @res = sort {
+            ($a->{meta}{prio}//50) <=> ($b->{meta}{prio}//50) ||
+                $a cmp $b
+            } @res;
+
+        my $expr;
+        for my $i (reverse 0..$#res) {
+            my $res = $res[$i];
+            if ($i == $#res) {
+                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : data";
+            } else {
+                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+            }
         }
+
+        $code = join(
+            "",
+            "function (data) {\n",
+            "    if (data === undefined || data === null) return null;\n",
+            "    return ($expr);\n",
+            "}",
+        );
+    } else {
+        $code = 'function (data) { return data }';
     }
 
-    my $coercer = join(
-        "",
-        "function (data) {\n",
-        "    if (data === undefined || data === null) return null;\n",
-        "    return ($expr);\n",
-        "}",
-    );
     if ($Log_Coercer_Code) {
-        $log->tracef("Coercer code (gen args: %s): %s", \%args, $coercer);
+        $log->tracef("Coercer code (gen args: %s): %s", \%args, $code);
     }
 
-    return $coercer if $args{source};
+    return $code if $args{source};
 
     state $nodejs_path = get_nodejs_path();
     die "Can't find node.js in PATH" unless $nodejs_path;
@@ -143,7 +151,7 @@ sub gen_coercer {
         state $json = JSON::MaybeXS->new->allow_nonref;
 
         # code to be sent to nodejs
-        my $src = "var coercer = $coercer;\n\n".
+        my $src = "var coercer = $code;\n\n".
             "console.log(JSON.stringify(coercer(".
                 $json->encode($data).")))";
 

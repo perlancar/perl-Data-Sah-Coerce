@@ -10,6 +10,7 @@ use warnings;
 sub meta {
     +{
         enable_by_default => 0,
+        prio => 50,
     };
 }
 
@@ -41,5 +42,6 @@ This is an optional rule (not enabled by default) that converts "true", "yes",
 "on" (matched case-insensitively) to "1" and "false", "no", "off", "0" (matched
 case-insensitively) to "". All other strings are left untouched.
 
-Otherwise, perl will regard all kinds of non-empty string that is not "0" as
-true.
+This rule is not enabled because it is incompatible with Perl's notion of
+true/false. Perl regards all non-empty string that isn't "0" (including "no",
+"false", "off") as true.

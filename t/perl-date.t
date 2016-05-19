@@ -8,14 +8,14 @@ use Data::Sah::Coerce qw(gen_coercer);
 use Test::More 0.98;
 use Test::Needs;
 
-subtest "coerce_to=int(epoch)" => sub {
-    my $c = gen_coercer(type=>"date", coerce_to=>"int(epoch)");
+subtest "coerce_to=float(epoch)" => sub {
+    my $c = gen_coercer(type=>"date", coerce_to=>"float(epoch)");
 
     subtest "uncoerced" => sub {
         is_deeply($c->([]), [], "uncoerced");
         is($c->(1), 1);
     };
-    subtest "from integer" => sub {
+    subtest "from float" => sub {
         is($c->(100_000_000), 100_000_000);
     };
     subtest "from DateTime object" => sub {
@@ -41,7 +41,7 @@ subtest "coerce_to=DateTime" => sub {
         is_deeply($c->([]), [], "uncoerced");
         is($c->(1), 1);
     };
-    subtest "from integer" => sub {
+    subtest "from float" => sub {
         my $d = $c->(100_000_000);
         is(ref($d), "DateTime");
         is("$d", "1973-03-03T09:46:40");
@@ -76,7 +76,7 @@ subtest "coerce_to=Time::Moment" => sub {
         is_deeply($c->([]), [], "uncoerced");
         is($c->(1), 1);
     };
-    subtest "from integer" => sub {
+    subtest "from float" => sub {
         my $d = $c->(100_000_000);
         is(ref($d), "Time::Moment");
         is("$d", "1973-03-03T09:46:40Z");

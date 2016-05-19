@@ -2,7 +2,22 @@ Revision history for Data-Sah-Coerce
 
 0.006   2016-05-19 (PERLANCAR) (unreleased)
 
+        [INCOMPATIBLE CHANGES]
+
+        - Rename js rules: date::int_epoch -> date::float_epoch. Rename perl
+          rules: date::int_epoch -> date::float_epoch. This means when
+          upgrading, you must first uninstall the old version to remove the old
+          module names. Sorry for this.
+
+        [ENHANCEMENTS]
+
+        - Introduce ordering ('prio' key in rule metadata). prio is a number
+          between 0-100 and the lower the number, the higher the priority is.
+          Rules will be sorted using their priority.
+
         - Add coercion rules for type 'bool'.
+
+        [TESTS]
 
         - Complete the rest of the test suite (js compiler, duration and bool
           types).

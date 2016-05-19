@@ -10,6 +10,7 @@ use warnings;
 sub meta {
     +{
         enable_by_default => 1,
+        prio => 50,
     };
 }
 

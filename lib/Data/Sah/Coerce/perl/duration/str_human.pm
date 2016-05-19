@@ -11,6 +11,7 @@ sub meta {
     +{
         enable_by_default => 1,
         might_die => 1, # we feed most string to Time::Duration::Parse::AsHash which might croak when fed invalid string
+        prio => 60,
     };
 }
 
