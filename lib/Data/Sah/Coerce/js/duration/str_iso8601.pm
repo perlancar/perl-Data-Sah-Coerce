@@ -34,7 +34,7 @@ sub coerce {
     # XXX i need a trick to avoid doing regex match twice
 
     # approximation
-    $res->{expr_coerce} = "(function(_m) { _m = $expr_re_match; return ((_m[1]||0)*365.25*86400 + (_m[2]||0)*30.4375*86400 + (_m[3]||0)*7*86400 + (_m[4]||0)*86400 + (_m[5]||0)*3600 + (_m[6]||0)*60 + (_m[7]||0)) })()";
+    $res->{expr_coerce} = "(function(_m) { _m = $expr_re_match; return ((_m[1]||0)*365.25*86400 + (_m[2]||0)*30.4375*86400 + (_m[3]||0)*7*86400 + (_m[4]||0)*86400 + (_m[5]||0)*3600 + (_m[6]||0)*60 + (_m[7]||0)*1) })()";
 
     $res;
 }
