@@ -8,6 +8,7 @@ use strict 'subs', 'vars';
 use warnings;
 use Log::Any::IfLOG '$log';
 
+use Data::Sah::CoerceCommon;
 use Nodejs::Util qw(get_nodejs_path);
 
 use Exporter qw(import);
@@ -29,42 +30,13 @@ sub _list_rule_modules {
     $mods;
 }
 
-$SPEC{gen_coercer} = {
-    v => 1.1,
-    summary => 'Generate Perl code to execute JavaScript coercer',
-    description => <<'_',
-
-This is mostly for testing. Normally the coercion rules will be used from
-`Data::Sah`.
-
-_
-    args => {
-        type => {
-            schema => 'str*', # XXX sah::typename
-            req => 1,
-            pos => 0,
-        },
-        coerce_to => {
-            schema => 'str*',
-        },
-        coerce_from => {
-            schema => ['array*', of=>'str*'],
-        },
-        dont_coerce_from => {
-            schema => ['array*', of=>'str*'],
-        },
-        source => {
-            summary => 'If set to true, will return coercer source code string'.
-                ' instead of compiled code',
-            schema => 'bool',
-        },
-    },
-    result_naked => 1,
-};
+$SPEC{gen_coercer} = $Data::Sah::CoerceCommon::gen_coercer_meta;
 sub gen_coercer {
     my %args = @_;
 
     my $type = $args{type};
+    my $rt = $args{return_type} // 'val';
+    my $rt_bv = $rt eq 'bool+val';
 
     my $all_mods = _list_rule_modules();
 
@@ -115,21 +87,36 @@ sub gen_coercer {
         for my $i (reverse 0..$#res) {
             my $res = $res[$i];
             if ($i == $#res) {
-                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : data";
+                if ($rt_bv) {
+                    $expr = "($res->{expr_match}) ? [true, $res->{expr_coerce}] : [false, data]";
+                } else {
+                    $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : data";
+                }
             } else {
-                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+                if ($rt_bv) {
+                    $expr = "($res->{expr_match}) ? [true, $res->{expr_coerce}] : ($expr)";
+                } else {
+                    $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+                }
             }
         }
 
         $code = join(
             "",
             "function (data) {\n",
-            "    if (data === undefined || data === null) return null;\n",
+            ($rt_bv ?
+                 "    if (data === undefined || data === null) return [false, null];\n" :
+                 "    if (data === undefined || data === null) return null;\n"
+             ),
             "    return ($expr);\n",
             "}",
         );
     } else {
-        $code = 'function (data) { return data }';
+        if ($rt_bv) {
+            $code = 'function (data) { return [false, data] }';
+        } else {
+            $code = 'function (data) { return data }';
+        }
     }
 
     if ($Log_Coercer_Code) {

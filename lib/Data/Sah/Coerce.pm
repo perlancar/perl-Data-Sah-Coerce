@@ -8,6 +8,8 @@ use strict 'subs', 'vars';
 use warnings;
 use Log::Any::IfLOG '$log';
 
+use Data::Sah::CoerceCommon;
+
 use Exporter qw(import);
 our @EXPORT_OK = qw(gen_coercer);
 
@@ -27,42 +29,13 @@ sub _list_rule_modules {
     $mods;
 }
 
-$SPEC{gen_coercer} = {
-    v => 1.1,
-    summary => 'Generate coercer code',
-    description => <<'_',
-
-This is mostly for testing. Normally the coercion rules will be used from
-`Data::Sah`.
-
-_
-    args => {
-        type => {
-            schema => 'str*', # XXX sah::typename
-            req => 1,
-            pos => 0,
-        },
-        coerce_to => {
-            schema => 'str*',
-        },
-        coerce_from => {
-            schema => ['array*', of=>'str*'],
-        },
-        dont_coerce_from => {
-            schema => ['array*', of=>'str*'],
-        },
-        source => {
-            summary => 'If set to true, will return coercer source code string'.
-                ' instead of compiled code',
-            schema => 'bool',
-        },
-    },
-    result_naked => 1,
-};
+$SPEC{gen_coercer} = $Data::Sah::CoerceCommon::gen_coercer_meta;
 sub gen_coercer {
     my %args = @_;
 
     my $type = $args{type};
+    my $rt = $args{return_type} // 'val';
+    my $rt_bv = $rt eq 'bool+val';
 
     my $all_mods = _list_rule_modules();
 
@@ -118,9 +91,17 @@ sub gen_coercer {
         for my $i (reverse 0..$#res) {
             my $res = $res[$i];
             if ($i == $#res) {
-                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : \$data";
+                if ($rt_bv) {
+                    $expr = "($res->{expr_match}) ? [1, $res->{expr_coerce}] : [0, \$data]";
+                } else {
+                    $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : \$data";
+                }
             } else {
-                $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+                if ($rt_bv) {
+                    $expr = "($res->{expr_match}) ? [1, $res->{expr_coerce}] : ($expr)";
+                } else {
+                    $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+                }
             }
         }
 
@@ -128,12 +109,19 @@ sub gen_coercer {
             "",
             "sub {\n",
             "    my \$data = shift;\n",
-            "    return undef unless defined(\$data);\n",
+            ($rt_bv ?
+                 "    return [0, undef] unless defined(\$data);\n" :
+                 "    return undef unless defined(\$data);\n"
+             ),
             "    $expr;\n",
             "}",
         );
     } else {
-        $code = 'sub { $_[0] }';
+        if ($rt_bv) {
+            $code = 'sub { [0, $_[0]] }';
+        } else {
+            $code = 'sub { $_[0] }';
+        }
     }
 
     if ($Log_Coercer_Code) {
