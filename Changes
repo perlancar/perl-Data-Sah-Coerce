@@ -1,5 +1,12 @@
 Revision history for Data-Sah-Coerce
 
+0.008   2016-05-21 (PERLANCAR)
+
+	- No functional changes.
+
+	- [test] Skip js tests when node.js is not available [CT].
+
+
 0.007   2016-05-20 (PERLANCAR)
 
         - Add option: return_type. The default is 'val' which is the same as
