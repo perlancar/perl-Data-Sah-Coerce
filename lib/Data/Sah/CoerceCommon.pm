@@ -121,13 +121,21 @@ sub get_coerce_rules {
         my $mod = "$prefix$rule_name";
         my $mod_pm = $mod; $mod_pm =~ s!::!/!g; $mod_pm .= ".pm";
         require $mod_pm;
+        my $rule_meta = &{"$mod\::meta"};
+        my $rule_v = ($rule_meta->{v} // 1);
+        if ($rule_v != 2) {
+            warn "Coercion rule module '$mod' is still at ".
+                "version $rule_v, will not be used";
+            next;
+        }
         next unless $explicitly_included_rule_names{$rule_name} ||
-            &{"$mod\::meta"}->{enable_by_default};
+            $rule_meta->{enable_by_default};
         my $rule = &{"$mod\::coerce"}(
             data_term => $dt,
             coerce_to => $args{coerce_to},
         );
         $rule->{name} = $rule_name;
+        $rule->{meta} = $rule_meta;
         push @rules, $rule;
     }
 

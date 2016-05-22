@@ -143,7 +143,8 @@ the following keys (C<*> marks that the key is required):
 
 =item * v* => int (default: 1)
 
-Metadata specification version. Currently at 1.
+Metadata specification version. Currently at 2 (bumped from 1 to exclude old
+module names).
 
 =item * enable_by_default* => bool
 

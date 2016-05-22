@@ -9,6 +9,7 @@ use warnings;
 
 sub meta {
     +{
+        v => 2,
         enable_by_default => 1,
         might_die => 1, # we throw exception date is invalid
         prio => 50,
