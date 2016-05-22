@@ -1,5 +1,13 @@
 Revision history for Data-Sah-Coerce
 
+0.011   2016-05-23 (PERLANCAR) (unreleased)
+
+        - Interpret rule metadata property 'precludes'.
+
+        - Allow regex items in 'dont_coerce_from' and 'coerce_from' array
+          argument.
+
+
 0.010   2016-05-22 (PERLANCAR)
 
         - Introduce rule metadata: v & precludes.
