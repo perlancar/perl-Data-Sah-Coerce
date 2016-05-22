@@ -175,6 +175,10 @@ the following keys (C<*> marks that the key is required):
 
 =over
 
+=item * v => int (default: 1)
+
+Metadata specification version. Currently at 1.
+
 =item * enable_by_default* => bool
 
 Whether the rule should be used by default. Some rules might be useful in
@@ -208,6 +212,29 @@ This is to regulate the ordering of rules. The higher the number, the lower the
 priority (meaning the rule will be put further back). Rules that are
 computationally expensive and/or matches more broadly in general should be put
 further back (lower priority, higher number).
+
+=item * precludes => array of (str|re)
+
+List the other rules or rule patterns that are precluded by this rule. Rules
+that are pure alternatives to one another (e.g. date coercien rules
+L<str_alami|Data::Sah::Coerce::date::str_alami> vs
+L<str_alami|Data::Sah::Coerce::date::str_alami> both parse natural language date
+string; there is little to none usefulness in using both; besides, both rules
+match all string and dies when failing to parse the string. So in C<str_natural>
+rule, you might find this metadata:
+
+ precludes => [qr/\Astr_alami(_.+)?\z/]
+
+and in C<str_alami> rule you might find this metadata:
+
+ precludes => [qr/\Astr_alami(_.+)?\z/, 'str_natural']
+
+Note that the C<str_alami> rule also precludes other C<str_alami_*> rules (like
+C<str_alami_en> and C<str_alami_id>).
+
+Also note that rules which are specifically requested to be used (e.g. using
+C<x.perl.coerce_from> attribute in Sah schema) are not precluded by other rules'
+C<precludes> metadata.
 
 =back
 
