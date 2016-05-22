@@ -4,7 +4,7 @@ package Data::Sah::CoerceJS;
 # VERSION
 
 use 5.010001;
-use strict 'subs', 'vars';
+use strict;
 use warnings;
 use Log::Any::IfLOG '$log';
 
@@ -18,86 +18,48 @@ our %SPEC;
 
 our $Log_Coercer_Code = $ENV{LOG_SAH_COERCER_CODE} // 0;
 
-my $rule_modules_cache;
-sub _list_rule_modules {
-    return $rule_modules_cache if $rule_modules_cache;
-    require PERLANCAR::Module::List;
-    my $prefix = "Data::Sah::Coerce::js::";
-    my $mods = PERLANCAR::Module::List::list_modules(
-        $prefix, {list_modules=>1, recurse=>1},
-    );
-    $rule_modules_cache = $mods;
-    $mods;
-}
+$SPEC{gen_coercer} = {
+    v => 1.1,
+    summary => 'Generate coercer code',
+    description => <<'_',
 
-$SPEC{gen_coercer} = $Data::Sah::CoerceCommon::gen_coercer_meta;
+This is mostly for testing. Normally the coercion rules will be used from
+`Data::Sah`.
+
+_
+    args => {
+        %Data::Sah::CoerceCommon::gen_coercer_args,
+    },
+    result_naked => 1,
+};
 sub gen_coercer {
     my %args = @_;
 
-    my $type = $args{type};
     my $rt = $args{return_type} // 'val';
     my $rt_sv = $rt eq 'str+val';
 
-    my $all_mods = _list_rule_modules();
-
-    my $typen = $type; $typen =~ s/::/__/g;
-    my $prefix = "Data::Sah::Coerce::js::$typen\::";
-    my @rules;
-    for my $mod (keys %$all_mods) {
-        next unless $mod =~ /\A\Q$prefix\E(.+)/;
-        push @rules, $1;
-    }
-    my %explicitly_included_rules;
-    for my $rule (@{ $args{coerce_from} // [] }) {
-        push @rules, $rule unless grep {$rule eq $_} @rules;
-        $explicitly_included_rules{$rule}++;
-    }
-    if ($args{dont_coerce_from} && @{ $args{dont_coerce_from} }) {
-        my @frules;
-        for my $rule (@rules) {
-            next if grep {$rule eq $_} @{ $args{dont_coerce_from} };
-            push @frules, $rule;
-        }
-        @rules = @frules;
-    }
-    @rules = sort @rules;
-
-    my @res;
-    for my $rule (@rules) {
-        my $mod = "$prefix$rule";
-        my $mod_pm = $mod; $mod_pm =~ s!::!/!g; $mod_pm .= ".pm";
-        require $mod_pm;
-        next unless $explicitly_included_rules{$rule} ||
-            &{"$mod\::meta"}->{enable_by_default};
-        my $res = &{"$mod\::coerce"}(
-            data_term => 'data',
-            coerce_to => $args{coerce_to},
-        );
-        $res->{rule} = $rule;
-        push @res, $res;
-    }
+    my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+        %args,
+        compiler=>'js',
+        data_term=>'data',
+    );
 
     my $code;
-    if (@res) {
-        @res = sort {
-            ($a->{meta}{prio}//50) <=> ($b->{meta}{prio}//50) ||
-                $a cmp $b
-            } @res;
-
+    if (@$rules) {
         my $expr;
-        for my $i (reverse 0..$#res) {
-            my $res = $res[$i];
-            if ($i == $#res) {
+        for my $i (reverse 0..$#{$rules}) {
+            my $rule = $rules->[$i];
+            if ($i == $#{$rules}) {
                 if ($rt_sv) {
-                    $expr = "($res->{expr_match}) ? [\"$res->{rule}\", $res->{expr_coerce}] : [null, data]";
+                    $expr = "($rule->{expr_match}) ? [\"$rule->{name}\", $rule->{expr_coerce}] : [null, data]";
                 } else {
-                    $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : data";
+                    $expr = "($rule->{expr_match}) ? ($rule->{expr_coerce}) : data";
                 }
             } else {
                 if ($rt_sv) {
-                    $expr = "($res->{expr_match}) ? [\"$res->{rule}\", $res->{expr_coerce}] : ($expr)";
+                    $expr = "($rule->{expr_match}) ? [\"$rule->{name}\", $rule->{expr_coerce}] : ($expr)";
                 } else {
-                    $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
+                    $expr = "($rule->{expr_match}) ? ($rule->{expr_coerce}) : ($expr)";
                 }
             }
         }
