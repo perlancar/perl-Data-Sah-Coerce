@@ -65,7 +65,7 @@ sub gen_coercer {
                 }
             } else {
                 if ($rt_sv) {
-                    $expr = "($rule->{expr_match}) ? ['$rule->{rule}', $rule->{expr_coerce}] : ($expr)";
+                    $expr = "($rule->{expr_match}) ? ['$rule->{name}', $rule->{expr_coerce}] : ($expr)";
                 } else {
                     $expr = "($rule->{expr_match}) ? ($rule->{expr_coerce}) : ($expr)";
                 }
