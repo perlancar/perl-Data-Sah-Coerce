@@ -36,7 +36,7 @@ sub gen_coercer {
 
     my $type = $args{type};
     my $rt = $args{return_type} // 'val';
-    my $rt_bv = $rt eq 'bool+val';
+    my $rt_sv = $rt eq 'str+val';
 
     my $all_mods = _list_rule_modules();
 
@@ -73,6 +73,7 @@ sub gen_coercer {
             data_term => 'data',
             coerce_to => $args{coerce_to},
         );
+        $res->{rule} = $rule;
         push @res, $res;
     }
 
@@ -87,14 +88,14 @@ sub gen_coercer {
         for my $i (reverse 0..$#res) {
             my $res = $res[$i];
             if ($i == $#res) {
-                if ($rt_bv) {
-                    $expr = "($res->{expr_match}) ? [true, $res->{expr_coerce}] : [false, data]";
+                if ($rt_sv) {
+                    $expr = "($res->{expr_match}) ? [\"$res->{rule}\", $res->{expr_coerce}] : [null, data]";
                 } else {
                     $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : data";
                 }
             } else {
-                if ($rt_bv) {
-                    $expr = "($res->{expr_match}) ? [true, $res->{expr_coerce}] : ($expr)";
+                if ($rt_sv) {
+                    $expr = "($res->{expr_match}) ? [\"$res->{rule}\", $res->{expr_coerce}] : ($expr)";
                 } else {
                     $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
                 }
@@ -104,16 +105,16 @@ sub gen_coercer {
         $code = join(
             "",
             "function (data) {\n",
-            ($rt_bv ?
-                 "    if (data === undefined || data === null) return [false, null];\n" :
+            ($rt_sv ?
+                 "    if (data === undefined || data === null) return [null, null];\n" :
                  "    if (data === undefined || data === null) return null;\n"
              ),
             "    return ($expr);\n",
             "}",
         );
     } else {
-        if ($rt_bv) {
-            $code = 'function (data) { return [false, data] }';
+        if ($rt_sv) {
+            $code = 'function (data) { return [null, data] }';
         } else {
             $code = 'function (data) { return data }';
         }

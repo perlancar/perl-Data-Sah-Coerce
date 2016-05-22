@@ -35,7 +35,7 @@ sub gen_coercer {
 
     my $type = $args{type};
     my $rt = $args{return_type} // 'val';
-    my $rt_bv = $rt eq 'bool+val';
+    my $rt_sv = $rt eq 'str+val';
 
     my $all_mods = _list_rule_modules();
 
@@ -77,6 +77,7 @@ sub gen_coercer {
                 require $mod_pm;
             }
         }
+        $res->{rule} = $rule;
         push @res, $res;
     }
 
@@ -91,14 +92,14 @@ sub gen_coercer {
         for my $i (reverse 0..$#res) {
             my $res = $res[$i];
             if ($i == $#res) {
-                if ($rt_bv) {
-                    $expr = "($res->{expr_match}) ? [1, $res->{expr_coerce}] : [0, \$data]";
+                if ($rt_sv) {
+                    $expr = "($res->{expr_match}) ? ['$res->{rule}', $res->{expr_coerce}] : [undef, \$data]";
                 } else {
                     $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : \$data";
                 }
             } else {
-                if ($rt_bv) {
-                    $expr = "($res->{expr_match}) ? [1, $res->{expr_coerce}] : ($expr)";
+                if ($rt_sv) {
+                    $expr = "($res->{expr_match}) ? ['$res->{rule}', $res->{expr_coerce}] : ($expr)";
                 } else {
                     $expr = "($res->{expr_match}) ? ($res->{expr_coerce}) : ($expr)";
                 }
@@ -109,16 +110,16 @@ sub gen_coercer {
             "",
             "sub {\n",
             "    my \$data = shift;\n",
-            ($rt_bv ?
-                 "    return [0, undef] unless defined(\$data);\n" :
+            ($rt_sv ?
+                 "    return [undef, undef] unless defined(\$data);\n" :
                  "    return undef unless defined(\$data);\n"
              ),
             "    $expr;\n",
             "}",
         );
     } else {
-        if ($rt_bv) {
-            $code = 'sub { [0, $_[0]] }';
+        if ($rt_sv) {
+            $code = 'sub { [undef, $_[0]] }';
         } else {
             $code = 'sub { $_[0] }';
         }
@@ -148,6 +149,7 @@ sub gen_coercer {
      coerce_to          => 'DateTime',
      # coerce_from      => [qw/str_alami/],   # explicitly enable some rules
      # dont_coerce_from => [qw/str_iso8601/], # explicitly disable some rules
+     # return_type      => 'str+val',         # default is 'val'
  );
 
  my $val = $c->(123);          # unchanged, 123

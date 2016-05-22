@@ -28,11 +28,11 @@ _
             schema => ['array*', of=>'str*'],
         },
         return_type => {
-            schema => ['str*', in=>[qw/val bool+val/]],
+            schema => ['str*', in=>[qw/val str+val/]],
             default => 'val',
             description => <<'_',
 
-`val` returns the value (possibly) coerced. `bool+val` returns a 2-element array
+`val` returns the value (possibly) coerced. `str+val` returns a 2-element array
 where the first element is a bool value of whether the value has been coerced,
 and the second element is the (possibly) coerced value.
 
