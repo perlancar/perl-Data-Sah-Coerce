@@ -125,7 +125,7 @@ sub get_coerce_rules {
         my $rule_v = ($rule_meta->{v} // 1);
         if ($rule_v != 2) {
             warn "Coercion rule module '$mod' is still at ".
-                "version $rule_v, will not be used";
+                "metadata version $rule_v, will not be used";
             next;
         }
         next unless $explicitly_included_rule_names{$rule_name} ||
