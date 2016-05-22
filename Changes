@@ -1,5 +1,10 @@
 Revision history for Data-Sah-Coerce
 
+0.009   2016-05-22 (PERLANCAR)
+
+	- [Incompatible change] Replace return_type=bool+val with str+val.
+
+
 0.008   2016-05-21 (PERLANCAR)
 
 	- No functional changes.
