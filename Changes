@@ -1,5 +1,18 @@
 Revision history for Data-Sah-Coerce
 
+0.010   2016-05-22 (PERLANCAR)
+
+        - Introduce rule metadata: v & precludes.
+
+        - [Incompatible change] Bump metadata version from 1 -> 2 to exclude old
+          rule modules (i.e. date::int_epoch from 0.005, which generate
+          CPANTesters failures).
+
+        - [Internal] Refactor routine: get_coerce_rules() to avoid code
+          duplication between Data::Sah::Coerce and Data::Sah::CoerceJS (and
+          Data::Sah::Compiler::Prog).
+
+
 0.009   2016-05-22 (PERLANCAR)
 
 	- [Incompatible change] Replace return_type=bool+val with str+val.
