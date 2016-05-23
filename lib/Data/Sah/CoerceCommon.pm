@@ -228,6 +228,8 @@ sub get_coerce_rules {
         );
         $rule->{name} = $rule_name;
         $rule->{meta} = $rule_meta;
+        $rule->{explicitly_used} =
+            $explicitly_used_rule_names{$rule_name} ? 1:0;
         push @rules, $rule;
     }
 
@@ -236,6 +238,31 @@ sub get_coerce_rules {
         ($a->{meta}{prio}//50) <=> ($b->{meta}{prio}//50) ||
             $a cmp $b
         } @rules;
+
+    # precludes
+    {
+        my $i = 0;
+        while ($i < @rules) {
+            my $rule = $rules[$i];
+            if ($rule->{meta}{precludes}) {
+                for my $j (reverse($i+1 .. $#rules)) {
+                    my $match;
+                    for my $p (@{ $rule->{meta}{precludes} }) {
+                        if (ref($p) eq 'Regexp' && $rules[$j]{name} =~ $p ||
+                                $rules[$j]{name} eq $p) {
+                            $match = 1;
+                            last;
+                        }
+                    }
+                    next unless $match;
+                    warn "Coercion rule $rules[$j]{name} is precluded by rule $rule->{name}"
+                        if $rule->{explicitly_used} && $rules[$j]{explicitly_used};
+                    splice @rules, $j, 1;
+                }
+            }
+            $i++;
+        }
+    }
 
     \@rules;
 }
