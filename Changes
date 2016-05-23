@@ -1,11 +1,13 @@
 Revision history for Data-Sah-Coerce
 
-0.011   2016-05-23 (PERLANCAR) (unreleased)
+0.011   2016-05-23 (PERLANCAR)
+
+        - [Incompatible change] Replace 'dont_coerce_from' and 'coerce_from'
+          options to 'coerce_rules' which are more flexible.
 
         - Interpret rule metadata property 'precludes'.
 
-        - Allow regex items in 'dont_coerce_from' and 'coerce_from' array
-          argument.
+        - [test] Forgot to add test_needs() to a subtest [CT].
 
 
 0.010   2016-05-22 (PERLANCAR)
