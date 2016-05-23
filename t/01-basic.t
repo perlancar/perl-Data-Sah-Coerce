@@ -5,15 +5,134 @@ use strict;
 use warnings;
 
 use Data::Sah::Coerce;
+use Data::Sah::CoerceCommon;
 use Data::Sah::CoerceJS;
 use Nodejs::Util qw(get_nodejs_path);
+use Test::Exception;
 use Test::More 0.98;
 use Test::Needs;
 
-# XXX test opt:coerce_from
-# XXX test opt:coerce_from unknown module
-# XXX test opt:dont_coerce_from
-# XXX test opt:done_coerce_from unknown module
+sub test_no_dupes {
+    my $rules = shift;
+    my %seen;
+    for (@$rules) {
+        if ($seen{$_->{name}}++) {
+            ok 0, "Duplicate rule in rules: $_->{name}";
+        }
+    }
+}
+
+# XXX check no duplicates in $rules
+subtest "opt:coerce_rules" => sub {
+    subtest "unknown name -> dies" => sub {
+        dies_ok {
+            Data::Sah::CoerceCommon::get_coerce_rules(
+                compiler=>"perl", type=>"date", coerce_to=>'float(epoch)', data_term=>'$data',
+                coerce_rules => ['FoO'],
+            );
+        };
+    };
+    subtest "unknown name in !name -> ignored" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>'float(epoch)', data_term=>'$data',
+            coerce_rules => ['!FoO'],
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+        ok(!(grep { $_->{name} eq 'FoO' } @$rules));
+    };
+
+    subtest "default (date)" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>'float(epoch)', data_term=>'$data',
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+    };
+    subtest "default (bool)" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"bool", data_term=>'$data',
+        );
+        test_no_dupes($rules);
+        #ok(@$rules); # this dies happens to not include any enabled-by-default rule for bool
+        ok(!(grep { $_->{name} eq 'str' } @$rules));
+    };
+
+    subtest "all" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"bool", data_term=>'$data',
+            coerce_rules=> ['.'],
+        );
+        ok(@$rules) or diag explain $rules;
+        ok((grep { $_->{name} eq 'str' } @$rules));
+    };
+
+    subtest "none" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>"float(epoch)", data_term=>'$data',
+            coerce_rules=>['!.'],
+        );
+        test_no_dupes($rules);
+        is(@$rules, 0);
+    };
+
+    subtest "only R" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>"float(epoch)", data_term=>'$data',
+            coerce_rules=>['!.', 'float_epoch'],
+        );
+        test_no_dupes($rules);
+        is(@$rules, 1);
+        is($rules->[0]{name}, 'float_epoch');
+    };
+    subtest "only /^R/" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>"float(epoch)", data_term=>'$data',
+            coerce_rules=>['!.', '^float_'],
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+        ok(grep { $_->{name} eq 'float_epoch' } @$rules);
+    };
+
+    subtest "default + R" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"bool", data_term=>'$data',
+            coerce_rules => ['str'],
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+        ok(grep { $_->{name} eq 'str' } @$rules);
+    };
+    subtest "default + /^R/" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"bool", data_term=>'$data',
+            coerce_rules => ['^str'],
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+        ok(grep { $_->{name} eq 'str' } @$rules);
+    };
+
+    subtest "default - R" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>"float(epoch)", data_term=>'$data',
+            coerce_rules=>['!float_epoch'],
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+        ok(!grep { $_->{name} eq 'float_epoch' } @$rules);
+    };
+    subtest "default - /^R/" => sub {
+        my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
+            compiler=>"perl", type=>"date", coerce_to=>"float(epoch)", data_term=>'$data',
+            coerce_rules=>['!^float_'],
+        );
+        test_no_dupes($rules);
+        ok(@$rules);
+        ok(!grep { $_->{name} eq 'float_epoch' } @$rules);
+    };
+};
 
 subtest "opt:return_type=sah+val" => sub {
     subtest "perl" => sub {

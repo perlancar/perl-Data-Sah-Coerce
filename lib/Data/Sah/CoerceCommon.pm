@@ -6,8 +6,6 @@ package Data::Sah::CoerceCommon;
 use 5.010001;
 use strict 'subs', 'vars';
 
-my $sch_array_of_str_or_re = ['array*', of=>['any*',of=>['str*','re*']]];
-
 my %common_args = (
     type => {
         schema => 'str*', # XXX sah::typename
@@ -16,12 +14,66 @@ my %common_args = (
     },
     coerce_to => {
         schema => 'str*',
+        description => <<'_',
+
+Some Sah types, like `date`, can be represented in a choice of types in the
+target language. For example, in Perl you can store it as a floating number
+a.k.a. `float(epoch)`, or as a `DateTime` object, or `Time::Moment` object.
+Storing in DateTime can be convenient for date manipulation but requires an
+overhead of loading the module and storing in a bulky format. The choice is
+yours to make, via this setting.
+
+_
     },
-    coerce_from => {
-        schema => $sch_array_of_str_or_re,
-    },
-    dont_coerce_from => {
-        schema => $sch_array_of_str_or_re,
+    coerce_rules => {
+        summary => 'A specification of coercion rules to use (or avoid)',
+        schema => ['array*', of=>'str*'],
+        description => <<'_',
+
+This setting is used to specify which coercion rules to use (or avoid) in a
+flexible way. Each element is a string, in the form of either `NAME` to mean
+specifically include a rule, or `!NAME` to exclude a rule, or `REGEX` or
+`!REGEX` to include or exclude a pattern. All NAME's that contains a
+non-alphanumeric, non-underscore character are assumed to be a REGEX pattern.
+
+Without this setting, the default is to use all available coercion
+rules that have `enabled_by_default` set to 1 in their metadata.
+
+To use all rules (even those that are not enabled by default):
+
+    ['.']
+
+To not use any rules:
+
+    ['!.']
+
+To use only rules named R1 and R2 and not any other rules (even
+enabled-by-default ones):
+
+    ['!.', 'R1', 'R2']
+
+To use only rules matching /^R/ and not any other rules (even
+enabled-by-default ones):
+
+    ['!.', '^R']
+
+To use the default rules plus R1 and R2:
+
+    ['R1', 'R2']
+
+To use the default rules plus rules matching /^R/:
+
+    ['^R']
+
+To use the default rules but not R1 and R2:
+
+    ['!R1', '!R2']
+
+To use the default rules but not rules matching /^R/:
+
+    ['!^R']
+
+_
     },
 );
 
@@ -97,27 +149,67 @@ sub get_coerce_rules {
     my $typen = $type; $typen =~ s/::/__/g;
     my $prefix = "Data::Sah::Coerce::$compiler\::$typen\::";
 
-    my @rule_names;
+    my @available_rule_names;
     for my $mod (keys %$all_mods) {
         next unless $mod =~ /\A\Q$prefix\E(.+)/;
-        push @rule_names, $1;
+        push @available_rule_names, $1;
     }
-    my %explicitly_included_rule_names;
-    for my $rule_name (@{ $args{coerce_from} // [] }) {
-        push @rule_names, $rule_name unless grep {$rule_name eq $_} @rule_names;
-        $explicitly_included_rule_names{$rule_name}++;
-    }
-    if ($args{dont_coerce_from} && @{ $args{dont_coerce_from} }) {
-        my @frule_names;
-        for my $rule_name (@rule_names) {
-            next if grep {$rule_name eq $_} @{ $args{dont_coerce_from} };
-            push @frule_names, $rule_name;
+
+    my @used_rule_names = @available_rule_names;
+    my %explicitly_used_rule_names;
+    for my $item (@{ $args{coerce_rules} // [] }) {
+        my $is_exclude = $item =~ s/\A!//;
+        my $is_re;
+        if ($item =~ /\A[A-Za-z0-9_]+\z/) {
+            $is_re = 0;
+        } else {
+            $is_re = 1;
+            eval { $item = qr/$item/ };
+            die "Invalid regex in coerce_rules item '$item': $@" if $@;
         }
-        @rule_names = @frule_names;
+        if ($is_exclude) {
+            if ($is_re) {
+                # exclude rules matching pattern
+                my @r;
+                for my $r (@available_rule_names) {
+                    next if $r =~ $item;
+                    push @r, $r;
+                }
+                @used_rule_names = @r;
+            } else {
+                # exclude rules matching pattern
+                my @r;
+                for my $r (@available_rule_names) {
+                    next if $r eq $item;
+                    push @r, $r;
+                }
+                @used_rule_names = @r;
+            }
+        } else {
+            if ($is_re) {
+                # add rules matching pattern
+                for my $r (@available_rule_names) {
+                    next unless $r =~ $item;
+                    $explicitly_used_rule_names{$r}++;
+                    unless (grep { $_ eq $r } @used_rule_names) {
+                        push @used_rule_names, $r;
+                    }
+                }
+            } else {
+                # add a specific rule
+                die "Unknown coercion rule '$item', make sure the coercion ".
+                    "rule module (Data::Sah::Coerce::$compiler\::$type\::$item".
+                    " has been installed"
+                    unless grep { $_ eq $item } @available_rule_names;
+                push @used_rule_names, $item
+                    unless grep { $_ eq $item } @used_rule_names;
+                $explicitly_used_rule_names{$item}++;
+            }
+        }
     }
 
     my @rules;
-    for my $rule_name (@rule_names) {
+    for my $rule_name (@used_rule_names) {
         my $mod = "$prefix$rule_name";
         my $mod_pm = $mod; $mod_pm =~ s!::!/!g; $mod_pm .= ".pm";
         require $mod_pm;
@@ -128,7 +220,7 @@ sub get_coerce_rules {
                 "metadata version $rule_v, will not be used";
             next;
         }
-        next unless $explicitly_included_rule_names{$rule_name} ||
+        next unless $explicitly_used_rule_names{$rule_name} ||
             $rule_meta->{enable_by_default};
         my $rule = &{"$mod\::coerce"}(
             data_term => $dt,

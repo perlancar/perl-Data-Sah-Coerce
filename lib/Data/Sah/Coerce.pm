@@ -113,9 +113,8 @@ sub gen_coercer {
  my $c = gen_coercer(
      type               => 'date',
      coerce_to          => 'DateTime',
-     # coerce_from      => [qw/str_alami/],   # explicitly enable some rules
-     # dont_coerce_from => [qw/str_iso8601/], # explicitly disable some rules
-     # return_type      => 'str+val',         # default is 'val'
+     coerce_rules       => ['str_alami'],  # explicitly enable a rule, etc
+     # return_type      => 'str+val',      # default is 'val'
  );
 
  my $val = $c->(123);          # unchanged, 123
@@ -151,11 +150,10 @@ module names).
 Whether the rule should be used by default. Some rules might be useful in
 certain situations only and can set this key's value to 0.
 
-To explicitly enable a disabled-by-default rule, a Sah schema can specify an
-attribute C<x.coerce_from> or C<x.perl.coerce_from>, etc to an array of coercion
-rule names to enable explicitly (e.g. C<< ["float_epoch", "str_8601"] >>. On the
-other hand, to explicitly disable an enabled-by-default rule, one can use the
-C<x.dont_coerce_from> (or C<x.perl.dont_coerce_from>, etc).
+To explicitly enable a disabled-by-default rule or explicitly disable an
+enabled-by-default rule, a Sah schema can set the attribute C<x.coerce_rules> or
+C<x.perl.coerce_rules> to something like C<< ["!str_iso8601", "str_alami"] >>
+(this means to exclude the C<str_iso8601> rule but enable the C<str_alami> rule.
 
 =item * might_die => bool (default: 0)
 
@@ -200,8 +198,7 @@ Note that the C<str_alami> rule also precludes other C<str_alami_*> rules (like
 C<str_alami_en> and C<str_alami_id>).
 
 Also note that rules which are specifically requested to be used (e.g. using
-C<x.perl.coerce_from> attribute in Sah schema) are not precluded by other rules'
-C<precludes> metadata.
+C<x.perl.coerce_rules> attribute in Sah schema) will still be precluded.
 
 =back
 
