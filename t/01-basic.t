@@ -8,6 +8,7 @@ use Data::Sah::Coerce;
 use Data::Sah::CoerceJS;
 use Nodejs::Util qw(get_nodejs_path);
 use Test::More 0.98;
+use Test::Needs;
 
 # XXX test opt:coerce_from
 # XXX test opt:coerce_from unknown module
@@ -16,6 +17,8 @@ use Test::More 0.98;
 
 subtest "opt:return_type=sah+val" => sub {
     subtest "perl" => sub {
+        test_needs "Time::Duration::Parse::AsHash";
+
         my $c_pl = Data::Sah::Coerce::gen_coercer(type=>"duration", coerce_to=>"float(secs)", return_type=>"str+val");
         is_deeply($c_pl->("1h"), ["str_human", 3600]);
         is_deeply($c_pl->("foo"), [undef, "foo"]);
@@ -31,5 +34,4 @@ subtest "opt:return_type=sah+val" => sub {
     };
 };
 
-ok 1;
 done_testing;
