@@ -1,5 +1,11 @@
 Revision history for Data-Sah-Coerce
 
+0.012   2016-05-24 (PERLANCAR)
+
+	- [Bugfix] Precludes should be checked to all rules, not just rules
+	  after the precluding rule.
+
+
 0.011   2016-05-23 (PERLANCAR)
 
         - [Incompatible change] Replace 'dont_coerce_from' and 'coerce_from'
