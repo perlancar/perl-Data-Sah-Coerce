@@ -245,7 +245,8 @@ sub get_coerce_rules {
         while ($i < @rules) {
             my $rule = $rules[$i];
             if ($rule->{meta}{precludes}) {
-                for my $j (reverse($i+1 .. $#rules)) {
+                for my $j (reverse 0 .. $#rules) {
+                    next if $j == $i;
                     my $match;
                     for my $p (@{ $rule->{meta}{precludes} }) {
                         if (ref($p) eq 'Regexp' && $rules[$j]{name} =~ $p ||
