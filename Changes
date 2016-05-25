@@ -1,5 +1,13 @@
 Revision history for Data-Sah-Coerce
 
+0.013   2016-05-25 (PERLANCAR)
+
+	- No functional changes.
+
+	- [test] Forgot to add test_needs(Time::Duration::Parse::AsHash) to
+	  some tests [CT].
+
+
 0.012   2016-05-24 (PERLANCAR)
 
 	- [Bugfix] Precludes should be checked to all rules, not just rules
