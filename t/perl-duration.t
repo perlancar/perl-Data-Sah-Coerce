@@ -9,6 +9,8 @@ use Test::More 0.98;
 use Test::Needs;
 
 subtest "coerce_to=float(secs)" => sub {
+    test_needs 'Time::Duration::Parse::AsHash';
+
     my $c = gen_coercer(type=>"duration", coerce_to=>"float(secs)");
 
     subtest "uncoerced" => sub {
@@ -32,6 +34,7 @@ subtest "coerce_to=float(secs)" => sub {
 
 subtest "coerce_to=DateTime::Duration" => sub {
     test_needs "DateTime::Duration";
+    test_needs 'Time::Duration::Parse::AsHash';
 
     my $c = gen_coercer(type=>"duration", coerce_to=>"DateTime::Duration");
 
