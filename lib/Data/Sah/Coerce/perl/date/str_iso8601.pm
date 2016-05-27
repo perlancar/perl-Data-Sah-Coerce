@@ -20,7 +20,7 @@ sub coerce {
     my %args = @_;
 
     my $dt = $args{data_term};
-    my $coerce_to = $args{coerce_to};
+    my $coerce_to = $args{coerce_to} // 'float(epoch)';
 
     my $res = {};
 
