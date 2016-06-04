@@ -9,6 +9,7 @@ use warnings;
 use Log::Any::IfLOG '$log';
 
 use Data::Sah::CoerceCommon;
+use IPC::System::Options;
 use Nodejs::Util qw(get_nodejs_path);
 
 use Exporter qw(import);
@@ -109,8 +110,7 @@ sub gen_coercer {
         print $jsh $src;
         close($jsh) or die "Can't write JS code to file $jsfn: $!";
 
-        my $cmd = "$nodejs_path $jsfn";
-        my $out = `$cmd`;
+        my $out = IPC::System::Options::backtick($nodejs_path, $jsfn);
         $json->decode($out);
     };
 }
