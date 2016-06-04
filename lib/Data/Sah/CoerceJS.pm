@@ -153,3 +153,6 @@ Set default for C<$Log_Coercer_Code>.
 =head1 SEE ALSO
 
 L<Data::Sah::Coerce>
+
+L<App::SahUtils>, including L<coerce-with-sah> to conveniently test coercion
+from the command-line.

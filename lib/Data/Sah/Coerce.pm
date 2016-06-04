@@ -288,3 +288,6 @@ Set default for C<$Log_Coercer_Code>.
 L<Data::Sah>
 
 L<Data::Sah::CoerceJS>
+
+L<App::SahUtils>, including L<coerce-with-sah> to conveniently test coercion
+from the command-line.
