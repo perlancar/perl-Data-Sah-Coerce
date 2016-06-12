@@ -20,15 +20,15 @@ subtest "coerce_to=boolean" => sub {
         is_deeply($c->(2), 2, "uncoerced");
     };
     subtest "from str" => sub {
-        is($c->("yes"), 1);
-        is($c->("true"), 1);
-        is($c->("on"), 1);
-        is($c->("1"), 1);
+        ok($c->("yes"));
+        ok($c->("true"));
+        ok($c->("on"));
+        ok($c->("1"));
 
-        is($c->("no"), '');
-        is($c->("false"), '');
-        is($c->("off"), '');
-        is($c->("0"), '');
+        ok(!$c->("no"));
+        ok(!$c->("false"));
+        ok(!$c->("off"));
+        ok(!$c->("0"));
     };
 };
 
