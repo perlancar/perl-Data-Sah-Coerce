@@ -1,5 +1,15 @@
 Revision history for Data-Sah-Coerce
 
+0.016   2016-06-12 (PERLANCAR)
+
+	- Tweak js-bool test to be more flexible of JSON decode result.
+
+	- Adjust to IPC::System::Options 0.27+ (backtick() renamed to
+	  readpipe()).
+
+	- [doc] Wording/typo/fmt.
+
+
 0.015   2016-06-04 (PERLANCAR)
 
 	- Use IPC::System::Options 0.25's backtick() to properly
