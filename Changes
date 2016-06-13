@@ -1,5 +1,11 @@
 Revision history for Data-Sah-Coerce
 
+0.017   2016-06-13 (PERLANCAR)
+
+	- Load required modules in the generated code, not in
+	  Data::Sah::Coerce.
+
+
 0.016   2016-06-12 (PERLANCAR)
 
 	- Tweak js-bool test to be more flexible of JSON decode result.
