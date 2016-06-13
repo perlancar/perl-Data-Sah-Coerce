@@ -45,12 +45,13 @@ sub gen_coercer {
 
     my $code;
     if (@$rules) {
-        # load all the required perl modules
+        my $code_require = '';
+        my %mem;
         for my $rule (@$rules) {
             next unless $rule->{modules};
             for my $mod (keys %{$rule->{modules}}) {
-                my $mod_pm = $mod; $mod_pm =~ s!::!/!g; $mod_pm .= ".pm";
-                require $mod_pm;
+                next if $mem{$mod}++;
+                $code_require .= "require $mod;\n";
             }
         }
 
@@ -74,6 +75,7 @@ sub gen_coercer {
 
         $code = join(
             "",
+            $code_require,
             "sub {\n",
             "    my \$data = shift;\n",
             ($rt_sv ?
