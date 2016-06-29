@@ -1,5 +1,11 @@
 Revision history for Data-Sah-Coerce
 
+0.018   2016-06-29 (PERLANCAR)
+
+	- Include nanoseconds when coercing from DateTime::Duration object
+	  to float(secs).
+
+
 0.017   2016-06-13 (PERLANCAR)
 
 	- Load required modules in the generated code, not in

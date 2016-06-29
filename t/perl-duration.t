@@ -21,7 +21,7 @@ subtest "coerce_to=float(secs)" => sub {
     };
     subtest "from DateTime::Duration object" => sub {
         test_needs "DateTime::Duration";
-        is($c->(DateTime::Duration->new(hours=>1, seconds=>1)), 3601);
+        is($c->(DateTime::Duration->new(hours=>1, seconds=>1, nanoseconds=>800_000_000)), 3601.8);
     };
     subtest "from human string" => sub {
         test_needs "Time::Duration::Parse::AsHash";
@@ -42,9 +42,11 @@ subtest "coerce_to=DateTime::Duration" => sub {
         is_deeply($c->([]), [], "uncoerced");
     };
     subtest "from float" => sub {
-        my $d = $c->(3601);
+        my $d = $c->(3601.8);
         is(ref($d), "DateTime::Duration");
-        is($d->seconds, 3601);
+        # currently we store all in the seconds
+        is($d->seconds, 3601.8);
+        is($d->nanoseconds, 0);
     };
     subtest "from DateTime::Duration object" => sub {
         my $d0 = DateTime::Duration->new(hours=>1, seconds=>1);
