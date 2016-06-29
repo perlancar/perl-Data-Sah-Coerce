@@ -33,7 +33,7 @@ sub coerce {
 
     if ($coerce_to eq 'float(secs)') {
         # approximation
-        $res->{expr_coerce} = "($dt\->years * 365.25*86400 + $dt\->months * 30.4375*86400 + $dt\->weeks * 7*86400 + $dt\->days * 86400 + $dt\->hours * 3600 + $dt\->minutes * 60 + $dt\->seconds)";
+        $res->{expr_coerce} = "($dt\->years * 365.25*86400 + $dt\->months * 30.4375*86400 + $dt\->weeks * 7*86400 + $dt\->days * 86400 + $dt\->hours * 3600 + $dt\->minutes * 60 + $dt\->seconds + $dt\->nanoseconds * 1e-9)";
     } elsif ($coerce_to eq 'DateTime::Duration') {
         $res->{expr_coerce} = $dt;
     } else {
