@@ -1,5 +1,12 @@
 Revision history for Data-Sah-Coerce
 
+0.019   2016-09-26 (PERLANCAR)
+
+	- Revert from using JSON::MaybeXS to JSON because JSON::MaybeXS is
+          currently not depakable (hard dependency to XS module
+          Cpanel::JSON::XS).
+
+
 0.018   2016-06-29 (PERLANCAR)
 
 	- Include nanoseconds when coercing from DateTime::Duration object
