@@ -94,12 +94,12 @@ sub gen_coercer {
 
     sub {
         require File::Temp;
-        require JSON::MaybeXS;
+        require JSON;
         #require String::ShellQuote;
 
         my $data = shift;
 
-        state $json = JSON::MaybeXS->new->allow_nonref;
+        state $json = JSON->new->allow_nonref;
 
         # code to be sent to nodejs
         my $src = "var coercer = $code;\n\n".
