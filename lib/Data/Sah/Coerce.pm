@@ -23,7 +23,7 @@ $SPEC{gen_coercer} = {
     description => <<'_',
 
 This is mostly for testing. Normally the coercion rules will be used from
-`Data::Sah`.
+<pm:Data::Sah>.
 
 _
     args => {
