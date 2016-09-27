@@ -18,9 +18,9 @@ my %common_args = (
 
 Some Sah types, like `date`, can be represented in a choice of types in the
 target language. For example, in Perl you can store it as a floating number
-a.k.a. `float(epoch)`, or as a `DateTime` object, or `Time::Moment` object.
-Storing in DateTime can be convenient for date manipulation but requires an
-overhead of loading the module and storing in a bulky format. The choice is
+a.k.a. `float(epoch)`, or as a <pm:DateTime> object, or <pm:Time::Moment>
+object. Storing in DateTime can be convenient for date manipulation but requires
+an overhead of loading the module and storing in a bulky format. The choice is
 yours to make, via this setting.
 
 _
@@ -121,8 +121,8 @@ This routine lists coerce rule modules, filters out unwanted ones, loads the
 rest, filters out old (version < current) modules or ones that are not enabled
 by default. Finally the routine gets the rules out.
 
-This common routine is used by `Data::Sah` compilers, as well as
-`Data::Sah::Coerce` and `Data::Sah::CoerceJS`.
+This common routine is used by <pm:Data::Sah> compilers, as well as
+<pm:Data::Sah::Coerce> and <pm:Data::Sah::CoerceJS>.
 
 _
     args => {
