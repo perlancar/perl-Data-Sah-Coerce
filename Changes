@@ -1,5 +1,12 @@
 Revision history for Data-Sah-Coerce
 
+0.020   2016-09-29 (PERLANCAR)
+
+        - [build] Rebuild to remove dependencies on
+          Data::Sah::Compiler::perl::TH::* (which was accidentally added by a
+          dzil plugin). [RT#118115]
+
+
 0.019   2016-09-26 (PERLANCAR)
 
 	- Revert from using JSON::MaybeXS to JSON because JSON::MaybeXS is
