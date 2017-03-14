@@ -1,3 +1,8 @@
+0.021   2017-03-14 (PERLANCAR)
+
+	- Add coerce rules: {int,float}::str_percent.
+
+
 0.020   2016-09-29 (PERLANCAR)
 
         - [build] Rebuild to remove dependencies on
