@@ -6,7 +6,7 @@ package Data::Sah::Coerce;
 use 5.010001;
 use strict;
 use warnings;
-use Log::Any::IfLOG '$log';
+use Log::ger;
 
 use Data::Sah::CoerceCommon;
 
@@ -94,7 +94,7 @@ sub gen_coercer {
     }
 
     if ($Log_Coercer_Code) {
-        $log->tracef("Coercer code (gen args: %s): %s", \%args, $code);
+        log_trace("Coercer code (gen args: %s): %s", \%args, $code);
     }
 
     return $code if $args{source};
