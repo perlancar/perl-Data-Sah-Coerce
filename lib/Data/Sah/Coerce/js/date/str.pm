@@ -9,9 +9,9 @@ use warnings;
 
 sub meta {
     +{
-        v => 2,
+        v => 3,
         enable_by_default => 1,
-        might_die => 1, # we throw exception date is invalid
+        might_fail => 1, # we throw exception date is invalid
         prio => 50,
     };
 }
@@ -29,7 +29,7 @@ sub coerce {
     );
 
     # note: (function(a,b,c){...})() is a trick to simulate lexical variables
-    $res->{expr_coerce} = "(function (_m) { _m = new Date($dt); if (isNaN(_m)) throw new Error('Invalid date'); return _m })()";
+    $res->{expr_coerce} = "(function (_m) { _m = new Date($dt); if (isNaN(_m)) { return ['Invalid date'] } else { return [null, _m] } })()";
 
     $res;
 }

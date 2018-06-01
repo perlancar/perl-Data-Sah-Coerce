@@ -9,9 +9,9 @@ use warnings;
 
 sub meta {
     +{
-        v => 2,
+        v => 3,
         enable_by_default => 1,
-        might_die => 1, # we throw exception date is invalid
+        might_fail => 1, # we return error when date is invalid
         prio => 50,
     };
 }
@@ -28,7 +28,7 @@ sub coerce {
         "($dt instanceof Date)",
     );
 
-    $res->{expr_coerce} = "isNaN($dt) ? (function(){throw new Error('Invalid date')})() : $dt";
+    $res->{expr_coerce} = "isNaN($dt) ? ['Invalid date'] : [null, $dt]";
 
     $res;
 }
