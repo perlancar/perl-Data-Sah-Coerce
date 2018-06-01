@@ -226,9 +226,9 @@ sub get_coerce_rules {
         my $rule_meta = &{"$mod\::meta"};
         my $rule_v = ($rule_meta->{v} // 1);
         if ($rule_v != 3) {
-            warn "Only coercion rule module '$mod' following ".
-                "metadata version 3 is supported, this rule module follows ".
-                "metadata version $rule_v and will not be used";
+            warn "Only coercion rule module following metadata version 3 is ".
+                "supported, this rule module '$mod' follows metadata version ".
+                "$rule_v and will not be used";
             next;
         }
         next unless $explicitly_used_rule_names{$rule_name} ||
