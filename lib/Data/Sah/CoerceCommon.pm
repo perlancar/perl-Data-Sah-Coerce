@@ -37,9 +37,10 @@ specifically include a rule, or `!NAME` to exclude a rule, or `REGEX` or
 non-alphanumeric, non-underscore character are assumed to be a REGEX pattern.
 
 Without this setting, the default is to use all available coercion
-rules that have `enabled_by_default` set to 1 in their metadata.
+rules that have `enable_by_default` set to 1 in their metadata.
 
-To use all rules (even those that are not enabled by default):
+To use all available (installed) rules (even those that are not enabled by
+default):
 
     ['.']
 
@@ -181,7 +182,7 @@ sub get_coerce_rules {
             if ($is_re) {
                 # exclude rules matching pattern
                 my @r;
-                for my $r (@available_rule_names) {
+                for my $r (@used_rule_names) {
                     next if $r =~ $item;
                     push @r, $r;
                 }
@@ -189,7 +190,7 @@ sub get_coerce_rules {
             } else {
                 # exclude rules matching pattern
                 my @r;
-                for my $r (@available_rule_names) {
+                for my $r (@used_rule_names) {
                     next if $r eq $item;
                     push @r, $r;
                 }
