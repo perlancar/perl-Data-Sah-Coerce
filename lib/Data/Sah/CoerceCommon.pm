@@ -247,7 +247,7 @@ sub get_coerce_rules {
     # sort by priority (then name)
     @rules = sort {
         ($a->{meta}{prio}//50) <=> ($b->{meta}{prio}//50) ||
-            $a cmp $b
+            $a->{name} cmp $b->{name}
         } @rules;
 
     # precludes
