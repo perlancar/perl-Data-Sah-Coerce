@@ -1,4 +1,4 @@
-package Data::Sah::Coerce::perl::date::float_epoch;
+package Data::Sah::Coerce::perl::date::float_epoch_always;
 
 # DATE
 # VERSION
@@ -10,9 +10,9 @@ use warnings;
 sub meta {
     +{
         v => 3,
-        enable_by_default => 1,
+        enable_by_default => 0,
         prio => 50,
-        precludes => ['float_epoch_always'],
+        precludes => ['float_epoch', 'str_iso8601'],
     };
 }
 
@@ -27,9 +27,7 @@ sub coerce {
     $res->{expr_match} = join(
         " && ",
         "!ref($dt)",
-        "$dt =~ /\\A[0-9]{8,10}(?:\.[0-9]+)?\\z/",
-        "$dt >= 10**8",
-        "$dt <= 2**31",
+        "$dt =~ /\\A[0-9]+(?:\.[0-9]+)?\\z/",
     );
 
     if ($coerce_to eq 'float(epoch)') {
@@ -55,10 +53,13 @@ sub coerce {
 
 =head1 DESCRIPTION
 
-To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD", we
-only do this coercion if data is a number between 10^8 and 2^31.
+To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD",
+this coercion rule precludes the
+L<str_iso8601|Data::Sah::Coerce::perl::date::str_iso8601> coercion rule.
 
 
 =head1 SEE ALSO
 
-L<Data::Sah::Coerce::perl::date::float_epoch_always>
+L<Data::Sah::Coerce::perl::date::float_epoch>
+
+L<Data::Sah::Coerce::perl::date::str_iso8601>
