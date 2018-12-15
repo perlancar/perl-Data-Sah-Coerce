@@ -1,4 +1,4 @@
-package Data::Sah::Coerce::js::date::obj_Date;
+package Data::Sah::Coerce::js::datenotime::obj_Date;
 
 # DATE
 # VERSION
@@ -7,31 +7,7 @@ use 5.010001;
 use strict;
 use warnings;
 
-sub meta {
-    +{
-        v => 3,
-        enable_by_default => 1,
-        might_fail => 1, # we return error when date is invalid
-        prio => 50,
-    };
-}
-
-sub coerce {
-    my %args = @_;
-
-    my $dt = $args{data_term};
-
-    my $res = {};
-
-    $res->{expr_match} = join(
-        " && ",
-        "($dt instanceof Date)",
-    );
-
-    $res->{expr_coerce} = "isNaN($dt) ? ['Invalid date'] : [null, $dt]";
-
-    $res;
-}
+use subroutines 'Data::Sah::Coerce::js::date::obj_Date';
 
 1;
 # ABSTRACT: Coerce datenotime from Date object
