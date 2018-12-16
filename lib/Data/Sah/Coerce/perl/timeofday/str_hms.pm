@@ -20,7 +20,7 @@ sub coerce {
     my %args = @_;
 
     my $dt = $args{data_term};
-    my $coerce_to = $args{coerce_to} // 'float';
+    my $coerce_to = $args{coerce_to} // 'str_hms';
 
     my $res = {};
 
