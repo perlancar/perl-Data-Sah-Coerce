@@ -26,7 +26,7 @@ sub coerce {
 
     $res->{expr_match} = join(
         " && ",
-        "$dt =~ /\\A([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,9})?\\z/",
+        "$dt =~ /\\A([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.[0-9]{1,9})?\\z/",
     );
 
     my $code_check = qq(if (\$1 > 23) { ["Invalid hour '\$1', must be between 0-23"] } elsif (\$2 > 59) { ["Invalid minute '\$2', must be between 0-59"] } elsif (\$3 > 59) { ["Invalid second '\$3', must be between 0-59"] });
@@ -34,7 +34,7 @@ sub coerce {
     if ($coerce_to eq 'float') {
         $res->{expr_coerce} = qq(do { $code_check else { [undef, \$1*3600 + \$2*60 + \$3 + (defined \$4 ? \$4 : 0)] } });
     } elsif ($coerce_to eq 'str_hms') {
-        $res->{expr_coerce} = qq(do { $code_check else { [undef, $dt] } });
+        $res->{expr_coerce} = qq(do { $code_check else { [undef, defined(\$4) && \$4 > 0 ? sprintf("%02d:%02d:%s%.11g", \$1, \$2, (\$3 < 10 ? "0":""), \$3+\$4) : sprintf("%02d:%02d:%02d", \$1, \$2, \$3)] } });
     } elsif ($coerce_to eq 'Date::TimeOfDay') {
         $res->{modules}{"Date::TimeOfDay"} //= 0.002;
         $res->{expr_coerce} = qq([undef, Date::TimeOfDay->new(hour=>\$1, minute=>\$2, second=>\$3, nanosecond=>(defined \$4 ? \$4*1e9 : 0))]);
