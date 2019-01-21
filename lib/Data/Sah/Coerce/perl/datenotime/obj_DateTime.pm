@@ -9,6 +9,8 @@ use warnings;
 
 use subroutines 'Data::Sah::Coerce::perl::date::obj_DateTime';
 
+# XXX truncate DateTime to day
+
 1;
 # ABSTRACT: Coerce datenotime from DateTime object
 

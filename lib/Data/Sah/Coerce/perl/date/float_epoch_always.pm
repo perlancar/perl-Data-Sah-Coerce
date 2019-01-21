@@ -9,8 +9,7 @@ use warnings;
 
 sub meta {
     +{
-        v => 3,
-        enable_by_default => 0,
+        v => 4,
         prio => 50,
         precludes => ['float_epoch', 'str_iso8601'],
     };
@@ -52,6 +51,11 @@ sub coerce {
 =for Pod::Coverage ^(meta|coerce)$
 
 =head1 DESCRIPTION
+
+This rule coerces date from number (which assumed to be epoch). If data is a
+number and C<coerce_to> is "float(epoch)" (the default), then this rule does
+nothing. If C<coerce_to> is "DateTime" or "Time::Moment" then this rule
+instantiates the appropriate date object using the epoch value.
 
 To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD",
 this coercion rule precludes the

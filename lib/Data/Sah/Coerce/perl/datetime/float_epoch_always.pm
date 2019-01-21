@@ -12,8 +12,7 @@ use subroutines 'Data::Sah::Coerce::perl::date::float_epoch_always';
 no warnings 'redefine';
 sub meta {
     +{
-        v => 3,
-        enable_by_default => 0,
+        v => 4,
         prio => 50,
         precludes => ['float_epoch'],
     };
@@ -21,7 +20,7 @@ sub meta {
 
 
 1;
-# ABSTRACT: Coerce datenotime from number (assumed to be epoch)
+# ABSTRACT: Coerce datetime from number (assumed to be epoch)
 
 =for Pod::Coverage ^(meta|coerce)$
 
@@ -30,6 +29,6 @@ sub meta {
 
 =head1 SEE ALSO
 
-L<Data::Sah::Coerce::perl::date::float_epoch>
+L<Data::Sah::Coerce::perl::datetime::float_epoch>
 
-L<Data::Sah::Coerce::perl::date::str_iso8601>
+L<Data::Sah::Coerce::perl::datetime::str_iso8601>

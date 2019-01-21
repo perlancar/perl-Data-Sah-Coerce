@@ -9,8 +9,7 @@ use warnings;
 
 sub meta {
     +{
-        v => 3,
-        enable_by_default => 1,
+        v => 4,
         might_fail => 1, # we match any (YYYY-MM-DD... string, so the conversion to date might fail on invalid dates)
         prio => 50,
     };
@@ -57,6 +56,7 @@ sub coerce {
 
 =head1 DESCRIPTION
 
-Currently only the following formats are accepted:
+This rule coerces datenotime from a subset of ISO8601 string. Currently only the
+following formats are accepted:
 
  "YYYY-MM-DD"            ; # date (local time), e.g.: 2016-05-13

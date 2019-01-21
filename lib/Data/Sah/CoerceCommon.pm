@@ -6,6 +6,24 @@ package Data::Sah::CoerceCommon;
 use 5.010001;
 use strict 'subs', 'vars';
 
+our %Default_Rules = (
+    perl => {
+        bool       => [qw//],
+        date       => [qw/float_epoch obj_DateTime obj_TimeMoment str_iso8601/],
+        datenotime => [qw/float_epoch obj_DateTime obj_TimeMoment str_iso8601/],
+        datetime   => [qw/float_epoch obj_DateTime obj_TimeMoment str_iso8601/],
+        duration   => [qw/float_secs obj_DateTimeDuration str_human str_iso8601/],
+        timeofday  => [qw/obj_DateTimeOfDay str_hms/],
+    },
+    js => {
+        bool       => [qw/float str/],
+        date       => [qw/float_epoch obj_Date str/],
+        datetime   => [qw/float_epoch obj_Date str/],
+        datenotime => [qw/float_epoch obj_Date str/],
+        duration   => [qw/float_secs str_iso8601/],
+    },
+);
+
 my %common_args = (
     type => {
         schema => 'str*', # XXX sah::typename
@@ -32,47 +50,20 @@ _
 
 This setting is used to specify which coercion rules to use (or avoid) in a
 flexible way. Each element is a string, in the form of either `NAME` to mean
-specifically include a rule, or `!NAME` to exclude a rule, or `REGEX` or
-`!REGEX` to include or exclude a pattern. All NAME's that contains a
-non-alphanumeric, non-underscore character are assumed to be a REGEX pattern.
+specifically include a rule, or `!NAME` to exclude a rule.
 
-Without this setting, the default is to use all available coercion
-rules that have `enable_by_default` set to 1 in their metadata.
-
-To use all available (installed) rules (even those that are not enabled by
-default):
-
-    ['.']
+Some coercion modules are used by default, unless explicitly avoided using the
+'!NAME' rule.
 
 To not use any rules:
-
-    ['!.']
-
-To use only rules named R1 and R2 and not any other rules (even
-enabled-by-default ones):
-
-    ['!.', 'R1', 'R2']
-
-To use only rules matching /^R/ and not any other rules (even
-enabled-by-default ones):
-
-    ['!.', '^R']
 
 To use the default rules plus R1 and R2:
 
     ['R1', 'R2']
 
-To use the default rules plus rules matching /^R/:
-
-    ['^R']
-
 To use the default rules but not R1 and R2:
 
     ['!R1', '!R2']
-
-To use the default rules but not rules matching /^R/:
-
-    ['!^R']
 
 _
     },
@@ -108,19 +99,6 @@ _
     },
 );
 
-my %rule_modules_cache; # key=compiler, value=hash of {module=>undef}
-sub _list_rule_modules {
-    my $compiler = shift;
-    return $rule_modules_cache{$compiler} if $rule_modules_cache{$compiler};
-    require PERLANCAR::Module::List;
-    my $prefix = "Data::Sah::Coerce::$compiler\::";
-    my $mods = PERLANCAR::Module::List::list_modules(
-        $prefix, {list_modules=>1, recurse=>1},
-    );
-    $rule_modules_cache{$compiler} = $mods;
-    $mods;
-}
-
 our %SPEC;
 
 $SPEC{get_coerce_rules} = {
@@ -128,9 +106,9 @@ $SPEC{get_coerce_rules} = {
     summary => 'Get coerce rules',
     description => <<'_',
 
-This routine lists coerce rule modules, filters out unwanted ones, loads the
-rest, filters out old (version < current) modules or ones that are not enabled
-by default. Finally the routine gets the rules out.
+This routine determines coerce rule modules to use (based on the default set and
+`coerce_rules` specified), loads them, filters out modules with old/incompatible
+metadata version, and return the list of rules.
 
 This common routine is used by <pm:Data::Sah> compilers, as well as
 <pm:Data::Sah::Coerce> and <pm:Data::Sah::CoerceJS>.
@@ -155,93 +133,41 @@ sub get_coerce_rules {
     my $compiler = $args{compiler};
     my $dt       = $args{data_term};
 
-    my $all_mods = _list_rule_modules($compiler);
-
     my $typen = $type; $typen =~ s/::/__/g;
     my $prefix = "Data::Sah::Coerce::$compiler\::$typen\::";
 
-    my @available_rule_names;
-    for my $mod (keys %$all_mods) {
-        next unless $mod =~ /\A\Q$prefix\E(.+)/;
-        push @available_rule_names, $1;
-    }
-
-    my @used_rule_names = @available_rule_names;
-    my %explicitly_used_rule_names;
+    my @rule_names = @{ $Default_Rules{$compiler}{$typen} || [] };
     for my $item (@{ $args{coerce_rules} // [] }) {
         my $is_exclude = $item =~ s/\A!//;
-        my $is_re;
-        if ($item =~ /\A[A-Za-z0-9_]+\z/) {
-            $is_re = 0;
-        } else {
-            $is_re = 1;
-            eval { $item = qr/$item/ };
-            die "Invalid regex in coerce_rules item '$item': $@" if $@;
-        }
+        $item =~ /\A[A-Za-z0-9_]+\z/
+            or die "Invalid coercion rule item '$item', please only use ".
+            "alphanumeric characters";
         if ($is_exclude) {
-            if ($is_re) {
-                # exclude rules matching pattern
-                my @r;
-                for my $r (@used_rule_names) {
-                    next if $r =~ $item;
-                    push @r, $r;
-                }
-                @used_rule_names = @r;
-            } else {
-                # exclude rules matching pattern
-                my @r;
-                for my $r (@used_rule_names) {
-                    next if $r eq $item;
-                    push @r, $r;
-                }
-                @used_rule_names = @r;
-            }
+            @rule_names = grep { $_ ne $item } @rule_names;
         } else {
-            if ($is_re) {
-                # add rules matching pattern
-                for my $r (@available_rule_names) {
-                    next unless $r =~ $item;
-                    $explicitly_used_rule_names{$r}++;
-                    unless (grep { $_ eq $r } @used_rule_names) {
-                        push @used_rule_names, $r;
-                    }
-                }
-            } else {
-                # add a specific rule
-                die "Unknown coercion rule '$item', make sure the coercion ".
-                    "rule module (Data::Sah::Coerce::$compiler\::$type\::$item".
-                    " has been installed"
-                    unless grep { $_ eq $item } @available_rule_names;
-                push @used_rule_names, $item
-                    unless grep { $_ eq $item } @used_rule_names;
-                $explicitly_used_rule_names{$item}++;
-            }
+            push @rule_names, $item unless grep { $_ eq $item } @rule_names;
         }
     }
 
     my @rules;
-    for my $rule_name (@used_rule_names) {
+    for my $rule_name (@rule_names) {
         my $mod = "$prefix$rule_name";
-        my $mod_pm = $mod; $mod_pm =~ s!::!/!g; $mod_pm .= ".pm";
+        (my $mod_pm = "$mod.pm") =~ s!::!/!g;
         require $mod_pm;
         my $rule_meta = &{"$mod\::meta"};
         my $rule_v = ($rule_meta->{v} // 1);
-        if ($rule_v != 3) {
-            warn "Only coercion rule module following metadata version 3 is ".
+        if ($rule_v != 3 && $rule_v != 4) {
+            warn "Only coercion rule module following metadata version 3/4 is ".
                 "supported, this rule module '$mod' follows metadata version ".
                 "$rule_v and will not be used";
             next;
         }
-        next unless $explicitly_used_rule_names{$rule_name} ||
-            $rule_meta->{enable_by_default};
         my $rule = &{"$mod\::coerce"}(
             data_term => $dt,
             coerce_to => $args{coerce_to},
         );
         $rule->{name} = $rule_name;
         $rule->{meta} = $rule_meta;
-        $rule->{explicitly_used} =
-            $explicitly_used_rule_names{$rule_name} ? 1:0;
         push @rules, $rule;
     }
 
@@ -268,8 +194,7 @@ sub get_coerce_rules {
                         }
                     }
                     next unless $match;
-                    warn "Coercion rule $rules[$j]{name} is precluded by rule $rule->{name}"
-                        if $rule->{explicitly_used} && $rules[$j]{explicitly_used};
+                    warn "Coercion rule $rules[$j]{name} is precluded by rule $rule->{name}";
                     splice @rules, $j, 1;
                 }
             }

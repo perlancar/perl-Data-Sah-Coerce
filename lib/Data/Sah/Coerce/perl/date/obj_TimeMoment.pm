@@ -9,8 +9,7 @@ use warnings;
 
 sub meta {
     +{
-        v => 3,
-        enable_by_default => 1,
+        v => 4,
         prio => 50,
     };
 }
@@ -50,3 +49,10 @@ sub coerce {
 # ABSTRACT: Coerce date from Time::Moment object
 
 =for Pod::Coverage ^(meta|coerce)$
+
+=head1 DESCRIPTION
+
+This rule coerces date from a L<Time::Moment> object. If C<coerce_to> is
+"Time::Moment" that this rule does not do anything. Otherwise, it converts the
+Time::Moment object to epoch (if C<coerce_to>="float(epoch)") or L<DateTime>
+object (if C<coerce_to>="DateTime").

@@ -9,8 +9,7 @@ use warnings;
 
 sub meta {
     +{
-        v => 3,
-        enable_by_default => 1,
+        v => 4,
         prio => 50,
         precludes => ['float_epoch_always'],
     };
@@ -55,8 +54,11 @@ sub coerce {
 
 =head1 DESCRIPTION
 
-To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD", we
+This rule coerces date from a number that is assumed to be a Unix epoch. To
+avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD", we
 only do this coercion if data is a number between 10^8 and 2^31.
+
+Hence, this rule has a Y2038 problem :-).
 
 
 =head1 SEE ALSO

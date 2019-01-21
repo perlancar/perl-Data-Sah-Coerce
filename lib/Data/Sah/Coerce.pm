@@ -172,7 +172,13 @@ the following keys (C<*> marks that the key is required):
 
 =item * v* => int (default: 1)
 
-Metadata specification version. Currently at 3.
+Metadata specification version. Currently at 4.
+
+History: bumped from 3 to 4 to remove C<enable_by_default> property. Now the
+list of standard (enabled-by-default) coercion rules is maintained in
+Data::Sah::Coerce itself. This allows us to skip scanning all
+Data::Sah::Coerce::* coercion modules installed on the system. Data::Sah::Coerce
+still accepts version 3; it just ignores the C<enable_by_default> property.
 
 History: bumped from 2 to 3 to allow coercion expression to return error message
 explaining why coercion fails. The C<might_die> metadata property is replaced
@@ -181,17 +187,6 @@ return array containing error message and coerced data, instead of just coerced
 data.
 
 History: Bumped from 1 to 2 to exclude old module names.
-
-=item * enable_by_default* => bool
-
-Whether the rule should be used by default. Some rules might be useful in
-certain situations only and can set this key's value to 0.
-
-To explicitly enable a disabled-by-default rule or explicitly disable an
-enabled-by-default rule, a Sah schema can set the attribute C<x.coerce_rules> or
-C<x.perl.coerce_rules> to something like C<< ["!str_iso8601", "str_alami"] >>
-(this means to exclude the C<str_iso8601> rule but enable the C<str_alami>
-rule).
 
 =item * might_fail => bool (default: 0)
 

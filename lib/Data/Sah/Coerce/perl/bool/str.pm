@@ -9,8 +9,7 @@ use warnings;
 
 sub meta {
     +{
-        v => 3,
-        enable_by_default => 0,
+        v => 4,
         prio => 50,
     };
 }
@@ -39,10 +38,10 @@ sub coerce {
 
 =head1 DESCRIPTION
 
-This is an optional rule (not enabled by default) that converts "true", "yes",
-"on" (matched case-insensitively) to "1" and "false", "no", "off", "0" (matched
-case-insensitively) to "". All other strings are left untouched.
+This coercion rule converts "true", "yes", "on" (matched case-insensitively) to
+"1"; and "false", "no", "off", "0" (matched case-insensitively) to "". All other
+strings are left untouched.
 
-This rule is not enabled because it is incompatible with Perl's notion of
-true/false. Perl regards all non-empty string that isn't "0" (including "no",
-"false", "off") as true.
+B<Note that this rule is incompatible with Perl's notion of true/false.> Perl
+regards all non-empty string that isn't "0" (including "no", "false", "off") as
+true.

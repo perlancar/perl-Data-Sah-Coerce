@@ -10,7 +10,7 @@ use warnings;
 use subroutines 'Data::Sah::Coerce::perl::date::float_epoch';
 
 1;
-# ABSTRACT: Coerce datenotime from number (assumed to be epoch)
+# ABSTRACT: Coerce datetime from number (assumed to be epoch)
 
 =for Pod::Coverage ^(meta|coerce)$
 
