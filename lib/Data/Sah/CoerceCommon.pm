@@ -21,6 +21,7 @@ our %Default_Rules = (
         datetime   => [qw/float_epoch obj_Date str/],
         datenotime => [qw/float_epoch obj_Date str/],
         duration   => [qw/float_secs str_iso8601/],
+        timeofday  => [qw/str_hms/],
     },
 );
 
