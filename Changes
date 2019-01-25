@@ -1,3 +1,10 @@
+0.033   2019-01-26 (PERLANCAR)
+
+	- [Bugfix] date coercion rule float_epoch_always doesn't need to
+	  preclude str_iso8601 because they won't be confused: str_iso8601
+	  matches YYYY-MM-DD and not YYYYMMDD.
+
+
 0.032   2019-01-21 (PERLANCAR)
 
         - Maintain a static list of default coercion modules instead of finding
