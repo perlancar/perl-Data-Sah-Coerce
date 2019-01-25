@@ -9,16 +9,6 @@ use warnings;
 
 use subroutines 'Data::Sah::Coerce::perl::date::float_epoch_always';
 
-no warnings 'redefine';
-sub meta {
-    +{
-        v => 4,
-        prio => 50,
-        precludes => ['float_epoch'],
-    };
-}
-
-
 1;
 # ABSTRACT: Coerce datetime from number (assumed to be epoch)
 

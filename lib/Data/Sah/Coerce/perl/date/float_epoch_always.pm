@@ -11,7 +11,7 @@ sub meta {
     +{
         v => 4,
         prio => 50,
-        precludes => ['float_epoch', 'str_iso8601'],
+        precludes => ['float_epoch'],
     };
 }
 
@@ -56,10 +56,6 @@ This rule coerces date from number (which assumed to be epoch). If data is a
 number and C<coerce_to> is "float(epoch)" (the default), then this rule does
 nothing. If C<coerce_to> is "DateTime" or "Time::Moment" then this rule
 instantiates the appropriate date object using the epoch value.
-
-To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD",
-this coercion rule precludes the
-L<str_iso8601|Data::Sah::Coerce::perl::date::str_iso8601> coercion rule.
 
 
 =head1 SEE ALSO

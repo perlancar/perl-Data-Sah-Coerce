@@ -16,10 +16,6 @@ use subroutines 'Data::Sah::Coerce::perl::date::float_epoch_always';
 
 =head1 DESCRIPTION
 
-To avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD",
-this coercion rule precludes the
-L<str_iso8601|Data::Sah::Coerce::perl::date::str_iso8601> coercion rule.
-
 
 =head1 SEE ALSO
 
