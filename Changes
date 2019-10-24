@@ -1,3 +1,8 @@
+0.034   2019-10-24  Released-By: PERLANCAR; Urgency: medium
+
+	- Add $DIST to all modules.
+
+
 0.033   2019-01-26  Released-By: PERLANCAR
 
 	- [Bugfix] date coercion rule float_epoch_always doesn't need to
