@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::js::bool::float;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

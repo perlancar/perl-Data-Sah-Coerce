@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::duration::obj_DateTimeDuration;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

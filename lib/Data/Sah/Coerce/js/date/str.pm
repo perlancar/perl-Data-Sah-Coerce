@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::js::date::str;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

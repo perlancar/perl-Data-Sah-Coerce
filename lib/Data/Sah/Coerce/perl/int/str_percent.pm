@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::int::str_percent;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

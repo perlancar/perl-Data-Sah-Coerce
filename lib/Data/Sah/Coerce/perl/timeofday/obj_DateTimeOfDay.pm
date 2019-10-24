@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::timeofday::obj_DateTimeOfDay;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

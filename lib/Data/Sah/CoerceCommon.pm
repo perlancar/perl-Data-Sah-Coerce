@@ -1,6 +1,7 @@
 package Data::Sah::CoerceCommon;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

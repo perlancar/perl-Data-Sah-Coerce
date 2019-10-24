@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::datetime::float_epoch_always;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::js::duration::float_secs;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::js::datenotime::obj_Date;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

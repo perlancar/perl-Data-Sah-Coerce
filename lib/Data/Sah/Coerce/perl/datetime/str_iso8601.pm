@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::datetime::str_iso8601;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

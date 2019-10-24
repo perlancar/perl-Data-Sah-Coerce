@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::bool::str;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

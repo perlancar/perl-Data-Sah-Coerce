@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::js::timeofday::str_hms;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

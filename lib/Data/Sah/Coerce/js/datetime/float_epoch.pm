@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::js::datetime::float_epoch;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;
