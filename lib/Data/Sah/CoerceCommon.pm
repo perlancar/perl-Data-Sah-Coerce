@@ -9,19 +9,19 @@ use strict 'subs', 'vars';
 our %Default_Rules = (
     perl => {
         bool       => [qw//],
-        date       => [qw/float_epoch obj_DateTime obj_TimeMoment str_iso8601/],
-        datenotime => [qw/float_epoch obj_DateTime obj_TimeMoment str_iso8601/],
-        datetime   => [qw/float_epoch obj_DateTime obj_TimeMoment str_iso8601/],
-        duration   => [qw/float_secs obj_DateTimeDuration str_human str_iso8601/],
-        timeofday  => [qw/obj_DateTimeOfDay str_hms/],
+        date       => [qw/From_float::Epoch From_obj::DateTime From_obj::TimeMoment From_str::ISO8601/],
+        datenotime => [qw/From_float::Epoch From_obj::DateTime From_obj::TimeMoment From_str::ISO8601/],
+        datetime   => [qw/From_float::Epoch From_obj::DateTime From_obj::TimeMoment From_str::ISO8601/],
+        duration   => [qw/From_float::Seconds From_obj::DateTimeDuration From_str::Human From_str::ISO8601/],
+        timeofday  => [qw/From_obj::DateTimeOfDay From_str::HMS/],
     },
     js => {
-        bool       => [qw/float str/],
-        date       => [qw/float_epoch obj_Date str/],
-        datetime   => [qw/float_epoch obj_Date str/],
-        datenotime => [qw/float_epoch obj_Date str/],
-        duration   => [qw/float_secs str_iso8601/],
-        timeofday  => [qw/str_hms/],
+        bool       => [qw/From_float::ZeroOne From_str::CommonWords/],
+        date       => [qw/From_float::Epoch From_obj::Date From_str::DateParse/],
+        datetime   => [qw/From_float::Epoch From_obj::Date From_str::DateParse/],
+        datenotime => [qw/From_float::Epoch From_obj::Date From_str::DateParse/],
+        duration   => [qw/From_float::Seconds From_str::ISO8601/],
+        timeofday  => [qw/From_str::HMS/],
     },
 );
 
@@ -135,14 +135,14 @@ sub get_coerce_rules {
     my $dt       = $args{data_term};
 
     my $typen = $type; $typen =~ s/::/__/g;
-    my $prefix = "Data::Sah::Coerce::$compiler\::$typen\::";
+    my $prefix = "Data::Sah::Coerce::$compiler\::To_$typen\::";
 
     my @rule_names = @{ $Default_Rules{$compiler}{$typen} || [] };
     for my $item (@{ $args{coerce_rules} // [] }) {
         my $is_exclude = $item =~ s/\A!//;
-        $item =~ /\A[A-Za-z0-9_]+\z/
-            or die "Invalid coercion rule item '$item', please only use ".
-            "alphanumeric characters";
+        $item =~ /\AFrom_[A-Za-z0-9_]+::[A-Za-z0-9_]+\z/
+            or die "Invalid syntax for coercion rule item '$item', please ".
+            "only use From_<type>::<description>";
         if ($is_exclude) {
             @rule_names = grep { $_ ne $item } @rule_names;
         } else {
