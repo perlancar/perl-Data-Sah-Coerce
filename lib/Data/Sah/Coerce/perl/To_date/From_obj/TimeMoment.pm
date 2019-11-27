@@ -1,6 +1,7 @@
 package Data::Sah::Coerce::perl::To_date::From_obj::TimeMoment;
 
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;

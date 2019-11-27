@@ -1,4 +1,7 @@
-0.034   2019-11-27  Released-By: PERLANCAR; Urgency: medium
+0.034.1 2019-11-27  Released-By: PERLANCAR; Urgency: medium
+
+        - Update 2019-11-27T17:22:00: rename from 0.034 to 0.034.1, cancel
+          release (duplicate version).
 
         [INCOMPATIBLE CHANGE]
 
@@ -16,6 +19,11 @@
 
         - Add summary to meta. This makes it easier for script like
           'list-sah-coerce-rule-modules` to display summary for each rule.
+
+
+0.034   2019-10-24  Released-By: PERLANCAR; Urgency: medium
+
+	- Add $DIST to all modules.
 
 
 0.033   2019-01-26  Released-By: PERLANCAR
