@@ -1,3 +1,23 @@
+0.034   2019-11-27  Released-By: PERLANCAR; Urgency: medium
+
+        [INCOMPATIBLE CHANGE]
+
+	- New naming scheme for coerce rule modules:
+	  Data::Sah::Coerce::To_<TargetType>::From_<SourceType>::<Description>;
+	  This makes the name significantly clearer. Metadata version is not
+	  bumped.
+
+          This means the old name is not searched anymore. Any Sah schema that
+          contains coercion rules must be updated so it refers to the new
+          module. Any Sah coercion module with the new name must be renamed to
+          the new one.
+
+        [ENHANCEMENTS]
+
+        - Add summary to meta. This makes it easier for script like
+          'list-sah-coerce-rule-modules` to display summary for each rule.
+
+
 0.033   2019-01-26  Released-By: PERLANCAR
 
 	- [Bugfix] date coercion rule float_epoch_always doesn't need to
