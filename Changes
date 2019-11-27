@@ -1,3 +1,11 @@
+0.035   2019-11-27  Released-By: PERLANCAR; Urgency: medium
+
+        - Merge releases 0.034.1 and 0.034.
+
+        - [build] Rebuild with dzil plugin [Data::Sah::Coerce] to put meta's
+          summary into Abstract.
+
+
 0.034.1 2019-11-27  Released-By: PERLANCAR; Urgency: medium
 
         - Update 2019-11-27T17:22:00: rename from 0.034 to 0.034.1, cancel
