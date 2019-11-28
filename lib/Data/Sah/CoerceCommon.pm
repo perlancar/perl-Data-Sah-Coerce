@@ -136,14 +136,20 @@ sub get_coerce_rules {
     my $dt       = $args{data_term};
 
     my $typen = $type; $typen =~ s/::/__/g;
+    my $old_prefix = "Data::Sah::Coerce::$compiler\::$typen\::"; # deprecated, <0.034, will be removed in the future
     my $prefix = "Data::Sah::Coerce::$compiler\::To_$typen\::";
 
     my @rule_names = @{ $Default_Rules{$compiler}{$typen} || [] };
+    my $is_old_name;
     for my $item (@{ $args{coerce_rules} // [] }) {
         my $is_exclude = $item =~ s/\A!//;
-        $item =~ /\AFrom_[A-Za-z0-9_]+::[A-Za-z0-9_]+\z/
-            or die "Invalid syntax for coercion rule item '$item', please ".
-            "only use From_<type>::<description>";
+        if ($item =~ /\A\w+\z/) {
+            $is_old_name = 1;
+        } elsif ($item =~ /\AFrom_[A-Za-z0-9_]+::[A-Za-z0-9_]+\z/) {
+        } else {
+            die "Invalid syntax for coercion rule item '$item', please ".
+                "only use From_<type>::<description>";
+        }
         if ($is_exclude) {
             @rule_names = grep { $_ ne $item } @rule_names;
         } else {
@@ -153,7 +159,7 @@ sub get_coerce_rules {
 
     my @rules;
     for my $rule_name (@rule_names) {
-        my $mod = "$prefix$rule_name";
+        my $mod = ($is_old_name ? $old_prefix : $prefix) . $rule_name;
         (my $mod_pm = "$mod.pm") =~ s!::!/!g;
         require $mod_pm;
         my $rule_meta = &{"$mod\::meta"};
