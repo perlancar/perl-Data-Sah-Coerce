@@ -20,7 +20,7 @@ subtest "coerce_to=" => sub {
 };
 
 subtest "coerce_to=, +rule str" => sub {
-    my $c = gen_coercer(type=>"bool", coerce_rules=>["From_str::CommonWords"]);
+    my $c = gen_coercer(type=>"bool", coerce_rules=>["From_str::common_words"]);
 
     subtest "uncoerced" => sub {
         is_deeply($c->([]), [], "uncoerced");

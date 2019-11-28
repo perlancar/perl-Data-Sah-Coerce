@@ -10,19 +10,19 @@ use strict 'subs', 'vars';
 our %Default_Rules = (
     perl => {
         bool       => [qw//],
-        date       => [qw/From_float::Epoch From_obj::DateTime From_obj::TimeMoment From_str::ISO8601/],
-        datenotime => [qw/From_float::Epoch From_obj::DateTime From_obj::TimeMoment From_str::ISO8601/],
-        datetime   => [qw/From_float::Epoch From_obj::DateTime From_obj::TimeMoment From_str::ISO8601/],
-        duration   => [qw/From_float::Seconds From_obj::DateTimeDuration From_str::Human From_str::ISO8601/],
-        timeofday  => [qw/From_obj::DateTimeOfDay From_str::HMS/],
+        date       => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
+        datenotime => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
+        datetime   => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
+        duration   => [qw/From_float::seconds From_obj::datetime_duration From_str::human From_str::iso8601/],
+        timeofday  => [qw/From_obj::date_timeofday From_str::hms/],
     },
     js => {
-        bool       => [qw/From_float::ZeroOne From_str::CommonWords/],
-        date       => [qw/From_float::Epoch From_obj::Date From_str::DateParse/],
-        datetime   => [qw/From_float::Epoch From_obj::Date From_str::DateParse/],
-        datenotime => [qw/From_float::Epoch From_obj::Date From_str::DateParse/],
-        duration   => [qw/From_float::Seconds From_str::ISO8601/],
-        timeofday  => [qw/From_str::HMS/],
+        bool       => [qw/From_float::zero_one From_str::common_words/],
+        date       => [qw/From_float::epoch From_obj::date From_str::date_parse/],
+        datetime   => [qw/From_float::epoch From_obj::date From_str::date_parse/],
+        datenotime => [qw/From_float::epoch From_obj::date From_str::date_parse/],
+        duration   => [qw/From_float::seconds From_str::iso8601/],
+        timeofday  => [qw/From_str::hms/],
     },
 );
 
