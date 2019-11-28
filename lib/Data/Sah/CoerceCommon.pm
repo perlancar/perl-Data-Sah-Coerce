@@ -140,12 +140,12 @@ sub get_coerce_rules {
     my $prefix = "Data::Sah::Coerce::$compiler\::To_$typen\::";
 
     my @rule_names = @{ $Default_Rules{$compiler}{$typen} || [] };
-    my $is_old_name;
     for my $item (@{ $args{coerce_rules} // [] }) {
         my $is_exclude = $item =~ s/\A!//;
         if ($item =~ /\A\w+\z/) {
-            $is_old_name = 1;
+            # old name
         } elsif ($item =~ /\AFrom_[A-Za-z0-9_]+::[A-Za-z0-9_]+\z/) {
+            # new name
         } else {
             die "Invalid syntax for coercion rule item '$item', please ".
                 "only use From_<type>::<description>";
@@ -159,6 +159,7 @@ sub get_coerce_rules {
 
     my @rules;
     for my $rule_name (@rule_names) {
+        my $is_old_name = $rule_name =~ /\A\w+\z/;
         my $mod = ($is_old_name ? $old_prefix : $prefix) . $rule_name;
         (my $mod_pm = "$mod.pm") =~ s!::!/!g;
         require $mod_pm;
