@@ -1,3 +1,9 @@
+0.036   2019-11-28  Released-By: PERLANCAR; Urgency: medium
+
+	- Restore backward compatibility by supporting old naming scheme to
+	  avoid breaking too many scripts/schemas.
+
+
 0.035   2019-11-27  Released-By: PERLANCAR; Urgency: medium
 
         - Merge releases 0.034.1 and 0.034.
@@ -22,6 +28,9 @@
           contains coercion rules must be updated so it refers to the new
           module. Any Sah coercion module with the new name must be renamed to
           the new one.
+
+          UPDATE 2019-11-28: old name is now still searched and accepted since
+          0.036.
 
         [ENHANCEMENTS]
 
