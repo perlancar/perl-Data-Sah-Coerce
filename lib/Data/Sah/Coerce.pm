@@ -230,7 +230,7 @@ and in C<From_str::Alami> rule you'll find this metadata:
  precludes => [qr/\AFrom_str::Alami(_.+)?\z/, 'From_str::Natural']
 
 Note that the C<From_str::Alami> rule also precludes other C<From_str::Alami_*>
-rules (like C<From_str::Alami_en> and C<From_str::Alami_id>).
+rules (like C<From_str::Alami_EN> and C<From_str::Alami_ID>).
 
 Also note that rules which are specifically requested to be used (e.g. using
 C<x.perl.coerce_rules> attribute in Sah schema) will still be precluded.
