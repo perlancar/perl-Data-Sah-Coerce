@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::js::To_duration::From_str::iso8601;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

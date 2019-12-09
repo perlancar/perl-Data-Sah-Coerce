@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::js::To_datetime::From_float::epoch;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

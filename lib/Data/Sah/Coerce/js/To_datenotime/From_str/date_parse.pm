@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::js::To_datenotime::From_str::date_parse;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

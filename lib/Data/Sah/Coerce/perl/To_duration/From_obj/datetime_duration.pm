@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_duration::From_obj::datetime_duration;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

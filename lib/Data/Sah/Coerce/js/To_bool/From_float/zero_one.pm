@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::js::To_bool::From_float::zero_one;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

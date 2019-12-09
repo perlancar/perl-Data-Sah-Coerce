@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_datetime::From_float::epoch_always;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

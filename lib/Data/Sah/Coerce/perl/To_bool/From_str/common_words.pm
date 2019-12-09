@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_bool::From_str::common_words;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

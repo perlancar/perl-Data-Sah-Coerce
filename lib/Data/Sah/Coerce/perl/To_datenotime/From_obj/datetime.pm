@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_datenotime::From_obj::datetime;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

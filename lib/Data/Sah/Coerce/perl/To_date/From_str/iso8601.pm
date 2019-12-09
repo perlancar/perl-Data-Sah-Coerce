@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_date::From_str::iso8601;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

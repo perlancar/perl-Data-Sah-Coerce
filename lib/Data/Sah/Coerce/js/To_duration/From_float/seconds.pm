@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::js::To_duration::From_float::seconds;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_timeofday::From_obj::date_timeofday;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION

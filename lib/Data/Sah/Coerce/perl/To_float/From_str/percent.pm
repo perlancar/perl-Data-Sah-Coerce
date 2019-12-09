@@ -1,6 +1,6 @@
 package Data::Sah::Coerce::perl::To_float::From_str::percent;
 
-# AUTHOR
+# AUTHORITY
 # DATE
 # DIST
 # VERSION
