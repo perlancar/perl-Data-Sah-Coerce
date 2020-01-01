@@ -139,8 +139,8 @@ sub gen_coercer {
  my $c = gen_coercer(
      type               => 'date',
      coerce_to          => 'DateTime',
-     coerce_rules       => ['str_alami'],  # explicitly enable a rule, etc
-     # return_type      => 'str+val',      # default is 'val'
+     coerce_rules       => ['From_str::natural'],  # explicitly enable a rule, etc
+     # return_type      => 'str+val',              # default is 'val'
  );
 
  my $val = $c->(123);          # unchanged, 123
@@ -217,20 +217,18 @@ put further back (lower priority, higher number).
 
 List the other rules or rule patterns that are precluded by this rule. Rules
 that are mutually exclusive or pure alternatives to one another (e.g. date
-coercien rules L<str_alami|Data::Sah::Coerce::date::str_alami> vs
-L<str_alami|Data::Sah::Coerce::date::str_alami> both parse natural language date
-string; there is usually little to none of usefulness in using both; besides,
-both rules match all string and dies when failing to parse the string. So in
-C<str_natural> rule, you'll find this metadata:
+coercien rules
+L<From_str::natural|Data::Sah::Coerce::To_date::From_str::natural> vs
+L<From_str::flexible|Data::Sah::Coerce::To_date::From_str::flexible> both parse
+natural language date string; there is usually little to none of usefulness in
+using both; besides, both rules match all string and dies when failing to parse
+the string. So in C<From_str::natural> rule, you'll find this metadata:
 
- precludes => [qr/\AFrom_str::Alami(_.+)?\z/]
+ precludes => [qr/\A(From_str::alami(_.+)?|From_str::natural)\z/]
 
-and in C<From_str::Alami> rule you'll find this metadata:
+and in C<From_str::flexible> rule you'll find this metadata:
 
- precludes => [qr/\AFrom_str::Alami(_.+)?\z/, 'From_str::Natural']
-
-Note that the C<From_str::Alami> rule also precludes other C<From_str::Alami_*>
-rules (like C<From_str::Alami_EN> and C<From_str::Alami_ID>).
+ precludes => [qr/\A(From_str::alami(_.+)?|From_str::flexible)\z/]
 
 Also note that rules which are specifically requested to be used (e.g. using
 C<x.perl.coerce_rules> attribute in Sah schema) will still be precluded.
