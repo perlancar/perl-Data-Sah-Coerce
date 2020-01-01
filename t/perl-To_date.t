@@ -71,6 +71,11 @@ subtest "coerce_to=DateTime" => sub {
         $d = $c->("2016-01-01 00:00:00Z");
         is(ref($d), "DateTime");
         is($d->epoch, 1451606400);
+
+        # test date before epoch
+        $d = $c->("1938-02-14");
+        is(ref($d), "DateTime");
+        is($d->ymd, "1938-02-14");
     };
 };
 
@@ -112,6 +117,11 @@ subtest "coerce_to=Time::Moment" => sub {
         $d = $c->("2016-01-01 00:00:00Z");
         is(ref($d), "Time::Moment");
         is($d->epoch, 1451606400);
+
+        # test date before epoch
+        $d = $c->("1938-02-14");
+        is(ref($d), "Time::Moment");
+        is($d->strftime("%Y-%m-%d"), "1938-02-14");
     };
 };
 
