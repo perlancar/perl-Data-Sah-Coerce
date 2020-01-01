@@ -1,3 +1,10 @@
+0.043   2020-01-02  Released-By: PERLANCAR; Urgency: low
+
+	- No functional changes.
+
+	- [doc] Update coerce rule names in examples.
+
+
 0.042   2020-01-02  Released-By: PERLANCAR; Urgency: medium
 
 	- [bugfix] Also support dates before epoch 0 (year 1969); switch from
