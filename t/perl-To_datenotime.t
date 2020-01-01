@@ -17,6 +17,8 @@ subtest "coerce_to=float(epoch)" => sub {
         test_needs "Time::Local";
         is($c->("2016-01-01T00:00:00Z"), "2016-01-01T00:00:00Z"); # uncoerced
         like($c->("2016-01-01"), qr/\A\d+\z/); # coerced
+        # test date before epoch 0
+        like($c->("1968-01-01"), qr/\A-\d+\z/);
     };
 };
 
@@ -26,7 +28,7 @@ subtest "coerce_to=DateTime" => sub {
     my $c = gen_coercer(type=>"datenotime", coerce_to=>"DateTime");
     my $d;
 
-    # test date before epoch
+    # test date before epoch 0
     $d = $c->("1938-02-14");
     is(ref($d), "DateTime");
     is($d->ymd, "1938-02-14");
@@ -38,7 +40,7 @@ subtest "coerce_to=Time::Moment" => sub {
     my $c = gen_coercer(type=>"datenotime", coerce_to=>"Time::Moment");
     my $d;
 
-    # test date before epoch
+    # test date before epoch 0
     $d = $c->("1938-02-14");
     is(ref($d), "Time::Moment");
     is($d->strftime("%Y-%m-%d"), "1938-02-14");
