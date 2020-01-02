@@ -1,3 +1,9 @@
+0.046   2020-01-03  Released-By: PERLANCAR; Urgency: medium
+
+	- [bugfix] Upgrade dependency Time::Local from TestRecommends to
+	  RuntimeRequires [RT#131332].
+
+
 0.045   2020-01-03  Released-By: PERLANCAR; Urgency: medium
 
 	- Update coerce rule names in doc and precludes.
