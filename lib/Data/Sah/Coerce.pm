@@ -156,9 +156,9 @@ is separated from the C<Data-Sah> distribution and can be used independently.
 
 A coercion rule is put in
 C<Data::Sah::Coerce::$COMPILER::To_$TARGET_TYPE::From_$SOURCE_TYPE::DESCRIPTION>
-module, for example: L<Data::Sah::Coerce::perl::To_date::From_float::Epoch> for
+module, for example: L<Data::Sah::Coerce::perl::To_date::From_float::epoch> for
 converting date from integer (Unix epoch) or
-L<Data::Sah::Coerce::perl::To_date::From_str::ISO8601> for converting date from
+L<Data::Sah::Coerce::perl::To_date::From_str::iso8601> for converting date from
 ISO8601 strings like "2016-05-15".
 
 Basically, a coercion rule will provide an expression (C<expr_match>) that
@@ -262,7 +262,7 @@ indicates required keys):
 =item * expr_match => str
 
 Expression in the target language to test whether the data can be coerced. For
-example, in C<Data::Sah::Coerce::perl::To_date::From_float::Epoch>, only
+example, in C<Data::Sah::Coerce::perl::To_date::From_float::epoch>, only
 integers ranging from 10^8 to 2^31 are converted into date. Non-integers or
 integers outside this range are not coerced.
 
