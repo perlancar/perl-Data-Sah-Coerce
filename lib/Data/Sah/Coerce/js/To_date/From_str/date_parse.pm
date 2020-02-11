@@ -31,7 +31,7 @@ sub coerce {
     );
 
     # note: (function(a,b,c){...})() is a trick to simulate lexical variables
-    $res->{expr_coerce} = "(function (_m) { _m = new Date($dt); if (isNaN(_m)) { return ['Invalid date'] } else { return [null, _m] } })()";
+    $res->{expr_coerce} = "(function (_m) { _m = new Date($dt); if (isNaN(_m)) { return ['Invalid date', _m] } else { return [null, _m] } })()";
 
     $res;
 }

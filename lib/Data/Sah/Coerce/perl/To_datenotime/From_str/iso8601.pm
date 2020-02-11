@@ -35,13 +35,13 @@ sub coerce {
 
     if ($coerce_to eq 'float(epoch)') {
         $res->{modules}{"Time::Local"} //= 0;
-        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = Time::Local::timelocal_modern(0, 0, 0, \$3, \$2-1, \$1) }; my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err"] } else { [undef, \$time] } });
+        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = Time::Local::timelocal_modern(0, 0, 0, \$3, \$2-1, \$1) }; my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err", \$time] } else { [undef, \$time] } });
     } elsif ($coerce_to eq 'DateTime') {
         $res->{modules}{"DateTime"} //= 0;
-        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = DateTime->new(year=>\$1, month=>\$2, day=>\$3) };          my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err"] } else { [undef, \$time] } });
+        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = DateTime->new(year=>\$1, month=>\$2, day=>\$3) };          my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err", \$time] } else { [undef, \$time] } });
     } elsif ($coerce_to eq 'Time::Moment') {
         $res->{modules}{"Time::Moment"} //= 0;
-        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = Time::Moment->new(year=>\$1, month=>\$2, day=>\$3) };      my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err"] } else { [undef, \$time] } });
+        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = Time::Moment->new(year=>\$1, month=>\$2, day=>\$3) };      my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err", \$time] } else { [undef, \$time] } });
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
             "please use float(epoch), DateTime, or Time::Moment";

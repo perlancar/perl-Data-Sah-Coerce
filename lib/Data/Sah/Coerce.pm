@@ -1,5 +1,6 @@
 package Data::Sah::Coerce;
 
+# AUTHORITY
 # DATE
 # DIST
 # VERSION
@@ -80,13 +81,13 @@ sub gen_coercer {
                 }
             } elsif ($rt eq 'status+val') {
                 if ($rule->{meta}{might_fail}) {
-                    $expr = "do { if ($rule->{expr_match}) { my \$res = $rule->{expr_coerce}; \$res->[0] ? [1,undef] : [1,\$res->[1]] } else { $prev_term } }";
+                    $expr = "do { if ($rule->{expr_match}) { my \$res = $rule->{expr_coerce}; \$res->[0] ? [1,\$res->[1]] : [1,\$res->[1]] } else { $prev_term } }";
                 } else {
                     $expr = "($rule->{expr_match}) ? [1, $rule->{expr_coerce}] : $prev_term";
                 }
             } else { # status+err+val
                 if ($rule->{meta}{might_fail}) {
-                    $expr = "do { if ($rule->{expr_match}) { my \$res = $rule->{expr_coerce}; \$res->[0] ? [1, \$res->[0], undef] : [1, undef, \$res->[1]] } else { $prev_term } }";
+                    $expr = "do { if ($rule->{expr_match}) { my \$res = $rule->{expr_coerce}; \$res->[0] ? [1, \$res->[0], \$res->[1]] : [1, undef, \$res->[1]] } else { $prev_term } }";
                 } else {
                     $expr = "($rule->{expr_match}) ? [1, undef, $rule->{expr_coerce}] : $prev_term";
                 }
@@ -199,12 +200,14 @@ Whether coercion might fail, e.g. because of invalid input. If set to 1,
 C<expr_coerce> key that the C<coerce()> routine returns must be an expression
 that returns an array (envelope) of C<< (error_msg, data) >> instead of just
 coerced data. Error message should be a string that is set when coercion fails
-and explains why. Otherwise, if coercion succeeds, the string should be set to
-undefined value.
+and explains why. Otherwise, if coercion succeeds, the error message string
+should be set to undefined value.
 
 An example of a rule like this is coercing from string in the form of
 "YYYY-MM-DD" to a DateTime object. The rule might match any string in the form
 of C<< /\A(\d{4})-(\d{2})-(\d{2})\z/ >> while it might not be a valid date.
+
+This is used for coercion rules that act as a data checker.
 
 =item * prio => int (0-100, default: 50)
 

@@ -1,5 +1,6 @@
 package Data::Sah::Coerce::js::To_date::From_obj::date;
 
+# AUTHORITY
 # DATE
 # DIST
 # VERSION
@@ -29,7 +30,7 @@ sub coerce {
         "($dt instanceof Date)",
     );
 
-    $res->{expr_coerce} = "isNaN($dt) ? ['Invalid date'] : [null, $dt]";
+    $res->{expr_coerce} = "isNaN($dt) ? ['Invalid date', $dt] : [null, $dt]";
 
     $res;
 }

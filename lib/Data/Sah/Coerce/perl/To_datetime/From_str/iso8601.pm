@@ -35,14 +35,14 @@ sub coerce {
 
     if ($coerce_to eq 'float(epoch)') {
         $res->{modules}{"Time::Local"} //= 0;
-        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = \$8 ? Time::Local::timegm_modern(\$7, \$6, \$5, \$3, \$2-1, \$1) : Time::Local::timelocal_modern(\$7, \$6, \$5, \$3, \$2-1, \$1) }; my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err"] } else { [undef, \$time] } });
+        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = \$8 ? Time::Local::timegm_modern(\$7, \$6, \$5, \$3, \$2-1, \$1) : Time::Local::timelocal_modern(\$7, \$6, \$5, \$3, \$2-1, \$1) }; my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err", \$time] } else { [undef, \$time] } });
     } elsif ($coerce_to eq 'DateTime') {
         $res->{modules}{"DateTime"} //= 0;
-        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = DateTime->new(year=>\$1, month=>\$2, day=>\$3, hour=>\$5, minute=>\$6, second=>\$7, time_zone => \$8 ? 'UTC' : 'local') };          my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err"] } else { [undef, \$time] } });
+        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = DateTime->new(year=>\$1, month=>\$2, day=>\$3, hour=>\$5, minute=>\$6, second=>\$7, time_zone => \$8 ? 'UTC' : 'local') };          my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err", \$time] } else { [undef, \$time] } });
     } elsif ($coerce_to eq 'Time::Moment') {
         $res->{modules}{"Time::Moment"} //= 0;
         # XXX set offset=>... when $8 is not Z
-        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = Time::Moment->new(year=>\$1, month=>\$2, day=>\$3, hour=>\$5, minute=>\$6, second=>\$7, offset=>0) };                               my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err"] } else { [undef, \$time] } });
+        $res->{expr_coerce} = qq(do { my \$time; eval { \$time = Time::Moment->new(year=>\$1, month=>\$2, day=>\$3, hour=>\$5, minute=>\$6, second=>\$7, offset=>0) };                               my \$err = \$@; if (\$err) { \$err =~ s/ at .+//s; ["Invalid date/time: \$err", \$time] } else { [undef, \$time] } });
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
             "please use float(epoch), DateTime, or Time::Moment";
