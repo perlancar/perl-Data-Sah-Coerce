@@ -38,6 +38,9 @@ sub gen_coercer {
     my %args = @_;
 
     my $rt = $args{return_type} // 'val';
+    # old values still supported but deprecated
+    $rt = 'bool_coerced+val' if $rt eq 'status+val';
+    $rt = 'bool_coerced+str_errmsg+val' if $rt eq 'status+err+val';
 
     my $rules = Data::Sah::CoerceCommon::get_coerce_rules(
         %args,
@@ -64,9 +67,9 @@ sub gen_coercer {
             if ($i == $#{$rules}) {
                 if ($rt eq 'val') {
                     $prev_term = '$data';
-                } elsif ($rt eq 'status+val') {
+                } elsif ($rt eq 'bool_coerced+val') {
                     $prev_term = '[undef, $data]';
-                } else { # status+err+val
+                } else { # bool_coerced+str_errmsg+val
                     $prev_term = '[undef, undef, $data]';
                 }
             } else {
@@ -79,13 +82,13 @@ sub gen_coercer {
                 } else {
                     $expr = "($rule->{expr_match}) ? ($rule->{expr_coerce}) : $prev_term";
                 }
-            } elsif ($rt eq 'status+val') {
+            } elsif ($rt eq 'bool_coerced+val') {
                 if ($rule->{meta}{might_fail}) {
                     $expr = "do { if ($rule->{expr_match}) { my \$res = $rule->{expr_coerce}; \$res->[0] ? [1,\$res->[1]] : [1,\$res->[1]] } else { $prev_term } }";
                 } else {
                     $expr = "($rule->{expr_match}) ? [1, $rule->{expr_coerce}] : $prev_term";
                 }
-            } else { # status+err+val
+            } else { # bool_coerced+str_errmsg+val
                 if ($rule->{meta}{might_fail}) {
                     $expr = "do { if ($rule->{expr_match}) { my \$res = $rule->{expr_coerce}; \$res->[0] ? [1, \$res->[0], \$res->[1]] : [1, undef, \$res->[1]] } else { $prev_term } }";
                 } else {
@@ -101,8 +104,8 @@ sub gen_coercer {
             "    my \$data = shift;\n",
             "    unless (defined \$data) {\n",
             "        ", ($rt eq 'val' ? "return undef;" :
-                             $rt eq 'status+val' ? "return [undef, undef];" :
-                             "return [undef, undef, undef];" # status+err+val
+                             $rt eq 'bool_coerced+val' ? "return [undef, undef];" :
+                             "return [undef, undef, undef];" # bool_coerced+str_errmsg+val
                          ), "\n",
             "    }\n",
             "    $expr;\n",
@@ -111,9 +114,9 @@ sub gen_coercer {
     } else {
         if ($rt eq 'val') {
             $code = 'sub { $_[0] }';
-        } elsif ($rt eq 'status+val') {
+        } elsif ($rt eq 'bool_coerced+val') {
             $code = 'sub { [undef, $_[0]] }';
-        } else {
+        } else { # bool_coerced+str_errmsg+val
             $code = 'sub { [undef, undef, $_[0]] }';
         }
     }

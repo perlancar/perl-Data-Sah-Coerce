@@ -1,5 +1,6 @@
 package Data::Sah::CoerceCommon;
 
+# AUTHORITY
 # DATE
 # DIST
 # VERSION
@@ -30,7 +31,7 @@ our %Default_Rules = (
 
 my %common_args = (
     type => {
-        schema => 'str*', # XXX sah::typename
+        schema => 'sah::type_name*',
             req => 1,
         pos => 0,
     },
@@ -76,23 +77,30 @@ _
 my %gen_coercer_args = (
     %common_args,
     return_type => {
-        schema => ['str*', in=>[qw/val status+val status+err+val/]],
+        schema => ['str*', {
+            in => [qw/val bool_coerced+val bool_coerced+str_errmsg+val/],
+            prefilters => [
+                ["Str::replace_map", {map=>{
+                    "status+val"     => "bool_coerced+val",
+                    "status+err+val" => "bool_coerced+str_errmsg+val",
+                }}],
+            ],
+        }],
         default => 'val',
         description => <<'_',
 
 `val` means the coercer will return the input (possibly) coerced or undef if
 coercion fails.
 
-`status+val` means the coercer will return a 2-element array. The first element
-is a bool value set to 1 if coercion has been performed or 0 if otherwise. The
-second element is the (possibly) coerced input (or undef if there is a failure
-during coercion).
-
-`status+err+val` means the coercer will return a 3-element array. The first
+`bool_coerced+val` means the coercer will return a 2-element array. The first
 element is a bool value set to 1 if coercion has been performed or 0 if
-otherwise. The second element is the error message string which will be set if
-there is a failure in coercion. The third element is the (possibly) coerced
-input (or undef if there is a failure during coercion).
+otherwise. The second element is the (possibly) coerced input.
+
+`bool_coerced+str_errmsg+val` means the coercer will return a 3-element array.
+The first element is a bool value set to 1 if coercion has been performed or 0
+if otherwise. The second element is the error message string which will be set
+if there is a failure in coercion (or undef if coercion is successful). The
+third element is the (possibly) coerced input.
 
 _
     },
