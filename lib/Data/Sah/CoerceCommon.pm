@@ -149,26 +149,29 @@ sub get_coerce_rules {
     my $old_prefix = "Data::Sah::Coerce::$compiler\::$typen\::"; # deprecated, <0.034, will be removed in the future
     my $prefix = "Data::Sah::Coerce::$compiler\::To_$typen\::";
 
-    my @rule_names = @{ $Default_Rules{$compiler}{$typen} || [] };
+    my @rules0 = @{ $Default_Rules{$compiler}{$typen} || [] };
     for my $item (@{ $args{coerce_rules} // [] }) {
-        my $is_exclude = $item =~ s/\A!//;
-        if ($SUPPORT_OLD_PREFIX && $item =~ /\A\w+\z/) {
+        my $rule_name = ref $item eq 'ARRAY' ? $item->[0] : $item;
+        my $is_exclude = $rule_name =~ s/\A!//;
+        if ($SUPPORT_OLD_PREFIX && $rule_name =~ /\A\w+\z/) {
             # old name
-        } elsif ($item =~ /\AFrom_[A-Za-z0-9_]+::[A-Za-z0-9_]+\z/) {
+        } elsif ($rule_name =~ /\AFrom_[A-Za-z0-9_]+::[A-Za-z0-9_]+\z/) {
             # new name
         } else {
             die "Invalid syntax for coercion rule item '$item', please ".
                 "only use From_<type>::<description>";
         }
         if ($is_exclude) {
-            @rule_names = grep { $_ ne $item } @rule_names;
+            @rules0 = grep { $_ ne $rule_name } @rules0;
         } else {
-            push @rule_names, $item unless grep { $_ eq $item } @rule_names;
+            push @rules0, $item unless grep { $_ eq $rule_name } @rules0;
         }
     }
 
     my @rules;
-    for my $rule_name (@rule_names) {
+    for my $item (@rules0) {
+        my $rule_name = ref $item eq 'ARRAY' ? $item->[0] : $item;
+        my $rule_gen_args = ref $item eq 'ARRAY' ? $item->[1] : undef;
         my $is_old_name = $SUPPORT_OLD_PREFIX && $rule_name =~ /\A\w+\z/;
         my $mod = ($is_old_name ? $old_prefix : $prefix) . $rule_name;
         (my $mod_pm = "$mod.pm") =~ s!::!/!g;
@@ -184,6 +187,7 @@ sub get_coerce_rules {
         my $rule = &{"$mod\::coerce"}(
             data_term => $dt,
             coerce_to => $args{coerce_to},
+            (args => $rule_gen_args) x !!$rule_gen_args,
         );
         $rule->{name} = $rule_name;
         $rule->{meta} = $rule_meta;
