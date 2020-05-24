@@ -13,18 +13,22 @@ our $SUPPORT_OLD_PREFIX = $ENV{PERL_DATA_SAH_COERCE_SUPPORT_OLD_PREFIX} // 1;
 our %Default_Rules = (
     perl => {
         bool       => [qw//],
-        date       => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
         datenotime => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
+        date       => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
         datetime   => [qw/From_float::epoch From_obj::datetime From_obj::time_moment From_str::iso8601/],
         duration   => [qw/From_float::seconds From_obj::datetime_duration From_str::human From_str::iso8601/],
+        float      => [qw/From_str::percent/],
+        num        => [qw/From_str::percent/],
         timeofday  => [qw/From_obj::date_timeofday From_str::hms/],
     },
     js => {
         bool       => [qw/From_float::zero_one From_str::common_words/],
+        datenotime => [qw/From_float::epoch From_obj::date From_str::date_parse/],
         date       => [qw/From_float::epoch From_obj::date From_str::date_parse/],
         datetime   => [qw/From_float::epoch From_obj::date From_str::date_parse/],
-        datenotime => [qw/From_float::epoch From_obj::date From_str::date_parse/],
         duration   => [qw/From_float::seconds From_str::iso8601/],
+        #float      => [qw/From_str::percent/],
+        #num        => [qw/From_str::percent/],
         timeofday  => [qw/From_str::hms/],
     },
 );
