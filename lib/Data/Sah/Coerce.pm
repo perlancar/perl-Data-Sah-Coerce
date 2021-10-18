@@ -1,10 +1,5 @@
 package Data::Sah::Coerce;
 
-# AUTHORITY
-# DATE
-# DIST
-# VERSION
-
 use 5.010001;
 use strict;
 use warnings;
@@ -14,6 +9,12 @@ use Log::ger;
 use Data::Sah::CoerceCommon;
 
 use Exporter qw(import);
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
+
 our @EXPORT_OK = qw(gen_coercer);
 
 our %SPEC;
@@ -127,7 +128,7 @@ sub gen_coercer {
 
     return $code if $args{source};
 
-    my $coercer = eval $code;
+    my $coercer = eval $code; ## no critic: BuiltinFunctions::ProhibitStringyEval
     die if $@;
     $coercer;
 }

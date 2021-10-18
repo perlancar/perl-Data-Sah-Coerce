@@ -1,13 +1,13 @@
 package Data::Sah::Coerce::js::To_bool::From_float::zero_one;
 
+use 5.010001;
+use strict;
+use warnings;
+
 # AUTHORITY
 # DATE
 # DIST
 # VERSION
-
-use 5.010001;
-use strict;
-use warnings;
 
 sub meta {
     +{

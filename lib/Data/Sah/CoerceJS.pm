@@ -1,10 +1,5 @@
 package Data::Sah::CoerceJS;
 
-# AUTHORITY
-# DATE
-# DIST
-# VERSION
-
 use 5.010001;
 use strict;
 use warnings;
@@ -15,6 +10,12 @@ use IPC::System::Options;
 use Nodejs::Util qw(get_nodejs_path);
 
 use Exporter qw(import);
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
+
 our @EXPORT_OK = qw(gen_coercer);
 
 our %SPEC;

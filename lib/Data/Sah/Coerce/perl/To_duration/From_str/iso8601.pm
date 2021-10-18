@@ -1,13 +1,13 @@
 package Data::Sah::Coerce::perl::To_duration::From_str::iso8601;
 
+use 5.010001;
+use strict;
+use warnings;
+
 # AUTHORITY
 # DATE
 # DIST
 # VERSION
-
-use 5.010001;
-use strict;
-use warnings;
 
 sub meta {
     +{

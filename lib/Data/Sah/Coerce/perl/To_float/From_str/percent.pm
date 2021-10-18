@@ -1,13 +1,13 @@
 package Data::Sah::Coerce::perl::To_float::From_str::percent;
 
+use 5.010001;
+use strict;
+use warnings;
+
 # AUTHORITY
 # DATE
 # DIST
 # VERSION
-
-use 5.010001;
-use strict;
-use warnings;
 
 sub meta {
     +{

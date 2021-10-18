@@ -1,12 +1,12 @@
 package Data::Sah::CoerceCommon;
 
+use 5.010001;
+use strict 'subs', 'vars';
+
 # AUTHORITY
 # DATE
 # DIST
 # VERSION
-
-use 5.010001;
-use strict 'subs', 'vars';
 
 our $SUPPORT_OLD_PREFIX = $ENV{PERL_DATA_SAH_COERCE_SUPPORT_OLD_PREFIX} // 1;
 
