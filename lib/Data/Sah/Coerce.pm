@@ -144,7 +144,7 @@ sub gen_coercer {
  my $c = gen_coercer(
      type               => 'date',
      coerce_to          => 'DateTime',
-     coerce_rules       => ['From_str::natural'],  # explicitly enable a rule, etc
+     coerce_rules       => ['From_str::natural'],  # explicitly enable a rule, etc. See Data::Sah::CoerceCommon's get_coerce_rules() for detailed syntax
      # return_type      => 'str+val',              # default is 'val'
  );
 
@@ -324,6 +324,9 @@ Set default for C<$Log_Coercer_Code>.
 
 
 =head1 SEE ALSO
+
+L<Data::Sah::CoerceCommon> for detailed syntax of coerce rules (explicitly
+including/excluding rules etc).
 
 L<Data::Sah>
 
