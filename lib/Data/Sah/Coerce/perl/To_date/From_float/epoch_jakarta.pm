@@ -1,4 +1,4 @@
-package Data::Sah::Coerce::perl::To_date::From_float::epoch_always;
+package Data::Sah::Coerce::perl::To_date::From_float::epoch_jakarta;
 
 use 5.010001;
 use strict;
@@ -12,7 +12,7 @@ use warnings;
 sub meta {
     +{
         v => 4,
-        summary => 'Coerce date from number (assumed to be epoch)',
+        summary => 'Coerce date from number (assumed to be epoch) (Asia/Jakarta time zone)',
         prio => 50,
         precludes => [qr/\AFrom_float::epoch(.*)\z/],
     };
@@ -29,14 +29,16 @@ sub coerce {
     $res->{expr_match} = join(
         " && ",
         "!ref($dt)",
-        "$dt =~ /\\A[0-9]+(?:\.[0-9]+)?\\z/",
+        "$dt =~ /\\A[0-9]{8,10}(?:\.[0-9]+)?\\z/",
+        "$dt >= 10**8",
+        "$dt <= 2**31",
     );
 
     if ($coerce_to eq 'float(epoch)') {
         $res->{expr_coerce} = $dt;
     } elsif ($coerce_to eq 'DateTime') {
         $res->{modules}{DateTime} //= 0;
-        $res->{expr_coerce} = "DateTime->from_epoch(epoch => $dt)";
+        $res->{expr_coerce} = "DateTime->from_epoch(epoch => $dt, time_zone=>'Asia/Jakarta')";
     } elsif ($coerce_to eq 'Time::Moment') {
         $res->{modules}{'Time::Moment'} //= 0;
         $res->{expr_coerce} = "Time::Moment->from_epoch($dt)";
@@ -55,14 +57,15 @@ sub coerce {
 
 =head1 DESCRIPTION
 
-This rule coerces date from number (which assumed to be epoch). If data is a
-number and C<coerce_to> is "float(epoch)" (the default), then this rule does
-nothing. If C<coerce_to> is "DateTime" or "Time::Moment" then this rule
-instantiates the appropriate date object using the epoch value.
+This rule coerces date from a number that is assumed to be a Unix epoch. To
+avoid confusion with number that contains "YYYY", "YYYYMM", or "YYYYMMDD", we
+only do this coercion if data is a number between 10^8 and 2^31.
+
+Hence, this rule has a Y2038 problem :-).
+
+Additionally, this rule sets time zone to Asia/Jakarta.
 
 
 =head1 SEE ALSO
 
 L<Data::Sah::Coerce::perl::To_date::From_float::epoch>
-
-L<Data::Sah::Coerce::perl::To_date::From_str::iso8601>

@@ -14,7 +14,7 @@ sub meta {
         v => 4,
         summary => 'Coerce date from number (assumed to be epoch)',
         prio => 50,
-        precludes => ['From_float::epoch_always'],
+        precludes => [qr/\AFrom_float::epoch(.*)\z/],
     };
 }
 
