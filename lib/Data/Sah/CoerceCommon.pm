@@ -33,7 +33,7 @@ our %Default_Rules = (
     },
 );
 
-my %common_args = (
+our %common_args = (
     type => {
         schema => 'sah::type_name*',
             req => 1,
@@ -78,7 +78,7 @@ _
     },
 );
 
-my %gen_coercer_args = (
+our %gen_coercer_args = (
     %common_args,
     return_type => {
         schema => ['str*', {
