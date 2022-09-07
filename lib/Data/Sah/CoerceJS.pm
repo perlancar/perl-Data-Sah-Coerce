@@ -6,9 +6,6 @@ use warnings;
 use Log::ger;
 
 use Data::Sah::CoerceCommon;
-use IPC::System::Options;
-use Nodejs::Util qw(get_nodejs_path);
-
 use Exporter qw(import);
 
 # AUTHORITY
@@ -33,6 +30,10 @@ This is mostly for testing. Normally the coercion rules will be used from
 _
     args => {
         %Data::Sah::CoerceCommon::gen_coercer_args,
+        engine => {
+            schema => ['str*', in=>['quickjs', 'nodejs']],
+            default => 'quickjs',
+        },
     },
     result_naked => 1,
 };
@@ -118,30 +119,53 @@ sub gen_coercer {
 
     return $code if $args{source};
 
-    state $nodejs_path = get_nodejs_path();
-    die "Can't find node.js in PATH" unless $nodejs_path;
+    require JSON;
+    state $json = JSON->new->allow_nonref;
 
-    sub {
-        require File::Temp;
-        require JSON;
-        #require String::ShellQuote;
+    my $engine = $args{engine} // 'quickjs';
 
-        my $data = shift;
+    if ($engine eq 'quickjs') {
 
-        state $json = JSON->new->allow_nonref;
+        return sub {
+            require JavaScript::QuickJS;
 
-        # code to be sent to nodejs
-        my $src = "var coercer = $code;\n\n".
-            "console.log(JSON.stringify(coercer(".
+            my $data = shift;
+
+            my $src = "var coercer = $code; coercer(".$json->encode($data).")";
+            JavaScript::QuickJS->new->eval($src);
+        };
+
+    } elsif ($engine eq 'nodejs') {
+
+        return sub {
+            require File::Temp;
+            require IPC::System::Options;
+            require Nodejs::Util;
+            #require String::ShellQuote;
+
+            state $nodejs_path = Nodejs::Util::get_nodejs_path();
+            die "Can't find node.js in PATH" unless $nodejs_path;
+
+            my $data = shift;
+
+            # code to be sent to nodejs
+            my $src = "var coercer = $code; ".
+                "console.log(JSON.stringify(coercer(".
                 $json->encode($data).")))";
 
-        my ($jsh, $jsfn) = File::Temp::tempfile();
-        print $jsh $src;
-        close($jsh) or die "Can't write JS code to file $jsfn: $!";
+            my ($jsh, $jsfn) = File::Temp::tempfile();
+            print $jsh $src;
+            close($jsh) or die "Can't write JS code to file $jsfn: $!";
 
-        my $out = IPC::System::Options::readpipe($nodejs_path, $jsfn);
-        $json->decode($out);
-    };
+            my $out = IPC::System::Options::readpipe($nodejs_path, $jsfn);
+            return $json->decode($out);
+        };
+
+    } else {
+
+        die "Unknown engine '$engine'";
+
+    }
 }
 
 1;
