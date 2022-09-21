@@ -163,7 +163,7 @@ sub get_coerce_rules {
             # new name
         } else {
             die "Invalid syntax for coercion rule item '$item', please ".
-                "only use From_<type>::<description>";
+                "only use (!)?From_<type>::<description>";
         }
         if ($is_exclude) {
             @rules0 = grep { $_ ne $rule_name } @rules0;
