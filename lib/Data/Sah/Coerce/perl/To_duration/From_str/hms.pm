@@ -37,7 +37,7 @@ sub coerce {
         $res->{expr_coerce} = qq(do { $code_check else { [undef, \$1*3600 + \$2*60 + (defined \$3 ? \$3 : 0) + (defined \$4 ? \$4 : 0)] } });
     } elsif ($coerce_to eq 'DateTime::Duration') {
         $res->{modules}{"DateTime::Duration"} //= 0;
-        $res->{expr_coerce} = qq(do { $code_check else { [undef, DateTime::Duration->new\$1*3600 + \$2*60 + (defined \$3 ? \$3 : 0) + (defined \$4 ? \$4 : 0)] } });
+        $res->{expr_coerce} = qq(do { $code_check else { [undef, DateTime::Duration->new(hours => \$1, minutes => \$2, seconds => (defined \$3 ? \$3 : 0), nanoseconds => (defined \$4 ? \$4 * 1e9 : 0))] } });
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
             "please use 'float(secs)' or 'DateTime::Duration'";
