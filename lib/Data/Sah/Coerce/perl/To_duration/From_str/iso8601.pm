@@ -58,4 +58,8 @@ The format is:
 
  PnYnMnWnDTnHnMnS
 
-Examples: "P1Y2M" (equals to "P14M", 14 months), "P1DT13M" (1 day, 13 minutes).
+Examples: "P1Y2M" (equals to "P14M", 14 months), "P1DT13M" (1 day, 13 minutes),
+"PT2.5M" (2.5 minutes).
+
+Duration can be coerced into one of: C<float(secs)> (number of seconds) or
+C<DateTime::Duration> (L<DateTime::Duration> object).
