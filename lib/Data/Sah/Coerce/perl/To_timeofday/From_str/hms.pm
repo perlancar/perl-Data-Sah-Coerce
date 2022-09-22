@@ -39,7 +39,7 @@ sub coerce {
         $res->{expr_coerce} = qq(do { $code_check else { [undef, defined(\$4) && \$4 > 0 ? sprintf("%02d:%02d:%s%.11g", \$1, \$2, (!defined(\$3) || \$3 < 10 ? "0":""), (defined \$3 ? \$3:0)+\$4) : sprintf("%02d:%02d:%02d", \$1, \$2, (defined \$3 ? \$3 : 0))] } });
     } elsif ($coerce_to eq 'Date::TimeOfDay') {
         $res->{modules}{"Date::TimeOfDay"} //= 0.002;
-        $res->{expr_coerce} = qq(do { $code_check else { [undef, Date::TimeOfDay->new(hours=>\$1, minutes=>\$2, seconds=>(defined \$3 ? \$3 : 0), nanoseconds=>(defined \$4 ? \$4*1e9 : 0))] } });
+        $res->{expr_coerce} = qq(do { $code_check else { [undef, Date::TimeOfDay->new(hour=>\$1, minute=>\$2, second=>(defined \$3 ? \$3 : 0), nanosecond=>(defined \$4 ? \$4*1e9 : 0))] } });
     } else {
         die "BUG: Unknown coerce_to value '$coerce_to', ".
             "please use float, str_hms, or Date::TimeOfDay";
