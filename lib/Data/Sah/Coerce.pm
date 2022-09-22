@@ -136,6 +136,8 @@ sub gen_coercer {
 1;
 # ABSTRACT: Coercion rules for Data::Sah
 
+=for Pod::Coverage .+
+
 =head1 SYNOPSIS
 
  use Data::Sah::Coerce qw(gen_coercer);
